@@ -41,14 +41,16 @@ const LoginPage = () => {
       >
         <Form className="space-y-4">
           {loginInputFields.map((field) => renderInputFields(field))}
-          <Button
-            variant="primary"
-            type="submit"
-            className="w-full"
-            loading={loginLoading}
-          >
-            Login
-          </Button>
+          <div className="flex w-full">
+            <Button
+              variant="primary"
+              type="submit"
+              className="flex-1"
+              loading={loginLoading}
+            >
+              Login
+            </Button>
+          </div>
         </Form>
       </Formik>
       <p className="mt-4 text-center text-sm">

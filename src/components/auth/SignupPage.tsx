@@ -49,14 +49,16 @@ const SignUpPage = () => {
       >
         <Form className="space-y-4">
           {signupInputFields.map((field) => renderInputFields(field))}
-          <Button
-            variant="primary"
-            type="submit"
-            className="w-full"
-            loading={signupLoading}
-          >
-            Sign up
-          </Button>
+          <div className="flex w-full">
+            <Button
+              variant="primary"
+              type="submit"
+              className="flex-1"
+              loading={signupLoading}
+            >
+              Sign up
+            </Button>
+          </div>
         </Form>
       </Formik>
       <p className="mt-4 text-center text-sm">

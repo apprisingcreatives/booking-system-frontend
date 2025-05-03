@@ -39,17 +39,21 @@ This is the frontend client for the **Dentist Appointment App**, a modern web pl
 ## 📁 Folder Structure
 
 src/
-├── components/ # Reusable UI and feature components
-├── hooks/ # Custom React hooks (e.g., for API calls)
-├── models/ # TypeScript interfaces and types
-├── pages/ # Page-level components
-├── routes/ # Routes
-├── services/ # Axios clients and API interactions
+├── assets/ # Static assets like images and icons
+├── components/ # Reusable UI components
+├── constants/ # App-wide constant values
+├── context/ # React context for global state (e.g., auth)
+├── features/ # Feature-specific modules and logic
+├── hooks/ # Custom React hooks
+├── models/ # TypeScript interfaces and models
+├── pages/ # Route-based page components
+├── routes/ # App route configurations
+├── services/ # API interaction logic (e.g., Axios clients)
+├── types/ # Global TypeScript types
 ├── utils/ # Utility functions
-├── constants/ # Reusable constants (e.g., roles, API routes)
-├── context/ # Auth and global state management
-├── App.tsx # Root application component
-└── main.tsx # Entry point
+├── App.tsx # Root app component
+├── main.tsx # App entry point
+└── vite-env.d.ts # Vite environment type declarations
 
 ## Running locally
 
