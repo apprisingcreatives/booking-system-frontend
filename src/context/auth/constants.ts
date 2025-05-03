@@ -1,0 +1,9 @@
+export const SET_LOGIN = "SET_LOGIN";
+export const SET_LOGIN_LOADING = "SET_LOGIN_LOADING";
+export const SET_LOGOUT = "SET_LOGOUT";
+export const SET_USER = "SET_USER";
+export const SET_SIGNUP_LOADING = "SET_SIGNUP_LOADING";
+export const SET_AUTH_ERROR = "SET_AUTH_ERROR";
+export const SET_LOADING_USER = "SET_LOADING_USER";
+export const SET_IS_AUTHENTICATED = "SET_IS_AUTHENTICATED";
+export const SET_USER_ROLE = "SET_USER_ROLE";
