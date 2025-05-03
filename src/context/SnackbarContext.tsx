@@ -29,6 +29,7 @@ interface SnackbarContextType {
   snackbarClose: () => void;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const Context = createContext<SnackbarContextType>(initialState);
 
 interface SnackbarProviderProps {

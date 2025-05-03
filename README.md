@@ -1,54 +1,71 @@
-# React + TypeScript + Vite
+# 🦷 Dentist Appointment App – Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend client for the **Dentist Appointment App**, a modern web platform that allows patients to book appointments with dentists, and enables dentists to manage appointments and patient information. Built using **React**, **TypeScript**, and **Vite**, the application offers role-based dashboards, form validation, secure authentication, and dynamic data handling.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+- 🔐 **Authentication & Authorization**
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+  - Sign up and login
+  - Role-based access for Patients and Dentists
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+- 📅 **Appointment Management**
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+  - Patients: View, book, and cancel appointments
+  - Dentists: View and manage appointments
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- 👤 **User Profile Management**
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+  - Update email and name
+  - Change password
+
+- 🧑‍⚕️ **Admin Capabilities**
+
+  - Promote or demote user roles (e.g., make someone a dentist or admin)
+
+- 💡 **Tech Stack**
+  - React + Vite
+  - TypeScript
+  - Formik + Yup for form handling and validation
+  - Axios for HTTP requests
+  - Tailwind CSS for styling
+  - React Router for navigation
+  - Context API for auth state management
+
+---
+
+## 📁 Folder Structure
+
+src/
+├── components/ # Reusable UI and feature components
+├── hooks/ # Custom React hooks (e.g., for API calls)
+├── models/ # TypeScript interfaces and types
+├── pages/ # Page-level components
+├── routes/ # Routes
+├── services/ # Axios clients and API interactions
+├── utils/ # Utility functions
+├── constants/ # Reusable constants (e.g., roles, API routes)
+├── context/ # Auth and global state management
+├── App.tsx # Root application component
+└── main.tsx # Entry point
+
+## Running locally
+
+npm run dev
+
+## Building for production
+
+npm run build
+
+✨ Contribution Guide
+Fork this repository
+
+Create a new branch: git checkout -b feature/your-feature
+
+Make your changes and commit them: git commit -m 'Add your feature'
+
+Push to your fork: git push origin feature/your-feature
+
+Submit a pull request
