@@ -9,6 +9,20 @@ type Props = {
 const ServicesSection = ({ servicesRef }: Props) => {
   const { user } = useAuth();
 
+  const renderSchedulAppointmentButton = () => {
+    if (user?.role === UserRole.Admin || user?.role === UserRole.Dentist) {
+      return null;
+    }
+    return (
+      <a
+        href="/booking"
+        className="mt-8 inline-block px-8 py-3 bg-blue-600 text-white text-lg font-medium rounded-lg shadow hover:bg-blue-700 transition duration-200"
+      >
+        Schedule an Appointment
+      </a>
+    );
+  };
+
   return (
     <section
       id="services"
@@ -36,16 +50,7 @@ const ServicesSection = ({ servicesRef }: Props) => {
           ))}
         </ul>
 
-        <div>
-          {user?.role === UserRole.Patient && (
-            <a
-              href="/booking"
-              className="mt-8 inline-block px-8 py-3 bg-blue-600 text-white text-lg font-medium rounded-lg shadow hover:bg-blue-700 transition duration-200"
-            >
-              Schedule an Appointment
-            </a>
-          )}
-        </div>
+        <div>{renderSchedulAppointmentButton()}</div>
       </div>
     </section>
   );

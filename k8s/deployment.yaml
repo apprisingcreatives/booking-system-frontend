@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: dental-frontend
-          image: 736744502716.dkr.ecr.us-east-1.amazonaws.com/my-dental-app-frontend:latest
+          image: <replace-at-runtime-in-GitHub-Actions>
           ports:
             - containerPort: 80
