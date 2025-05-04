@@ -18,7 +18,7 @@ const AboutSection = ({ aboutUsRef }: Props) => {
         {dashboardSubtitle.split("\n").map((line, index) => (
           <p
             key={index}
-            className="mb-4 text-gray-700 leading-relaxed text-base md:text-lg"
+            className="mb-4 text-gray-700 leading-relaxed  text-base md:text-lg"
           >
             {line.trim()}
           </p>
