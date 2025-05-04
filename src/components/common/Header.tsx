@@ -51,7 +51,7 @@ const Header = ({
       <Link to="/dashboard" className={commonLinkStyle}>
         Dashboard
       </Link>
-      {!pathname.includes("booking") && role !== UserRole.Admin && (
+      {!pathname.includes("booking") && role === UserRole.Patient && (
         <Link to="/booking" className={commonLinkStyle}>
           Book appointment
         </Link>
