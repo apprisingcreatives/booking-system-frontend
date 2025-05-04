@@ -38,17 +38,28 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-docker-
 
-      - name: Build and push Docker image
+      # Build, tag, and push Docker image
+      - name: Build, tag, and push Docker image
         env:
-          VITE_API_URL_PROD: ${{ secrets.VITE_API_URL_PROD }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          ECR_REPO: ${{ secrets.ECR_REPOSITORY }}
         run: |
-          docker build \
-            --build-arg VITE_API_URL_PROD=$VITE_API_URL_PROD \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO
+          IMAGE_URI=$REPOSITORY_URI:${{ github.sha }}
 
-      - name: Update Kubernetes deployment
+          docker build -t $IMAGE_URI .
+          docker push $IMAGE_URI
+
+          # Inject the built image into the deployment.yaml
+          sed "s|<replace-at-runtime-in-GitHub-Actions>|$IMAGE_URI|g" k8s/deployment.yaml > k8s/deployment.generated.yaml
+
+      # Update kubeconfig
+      - name: Update kubeconfig for EKS
+        run: aws eks update-kubeconfig --name ${{ secrets.CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
+
+      # Deploy to EKS
+      - name: Apply Kubernetes manifests
         run: |
-          aws eks update-kubeconfig --region $AWS_REGION --name my-dental-app-cluster
-          kubectl set image deployment/dental-frontend dental-frontend=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          kubectl rollout status deployment/dental-frontend
+          kubectl apply -f k8s/deployment.generated.yaml
+          kubectl apply -f k8s/service.yaml
