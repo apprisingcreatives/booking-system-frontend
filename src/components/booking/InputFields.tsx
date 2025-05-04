@@ -66,6 +66,7 @@ const InputFields = ({ dentists }: Props) => {
           name="appointmentDate"
           type="date"
           className="flex-1"
+          minDateToday
         />
         <TimeSelectInput
           name="time"

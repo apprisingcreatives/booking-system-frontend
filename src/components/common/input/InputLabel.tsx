@@ -10,6 +10,7 @@ type Props = {
   placeholder?: string;
   className?: string;
   disabled?: boolean;
+  minDateToday?: boolean;
 };
 
 const InputLabel = ({
@@ -20,12 +21,18 @@ const InputLabel = ({
   placeholder = "",
   className = "",
   disabled = false,
+  minDateToday,
 }: Props) => {
   const [field] = useField(name);
   const [showPassword, setShowPassword] = useState(false);
 
   const isPassword = type === "password";
   const inputType = isPassword && showPassword ? "text" : type;
+
+  const minDate =
+    type === "date" && minDateToday
+      ? new Date().toISOString().split("T")[0]
+      : undefined;
 
   return (
     <div className={clsx("gap-y-1 flex flex-col", className)}>
@@ -38,6 +45,7 @@ const InputLabel = ({
         type={inputType}
         placeholder={placeholder}
         disabled={disabled}
+        min={minDate}
         className="w-full p-2 border rounded disabled:bg-gray-200 disabled:text-gray-600 disabled:border-0"
       />
       {isPassword && (

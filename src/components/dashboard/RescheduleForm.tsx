@@ -1,24 +1,24 @@
-import {
-  Button,
-  ErrorTypography,
-  InputLabel,
-  TimeSelectInput,
-} from "../common";
-import { Form, Formik } from "formik";
-import { formikInitialValues, rescheduleSchema } from "./constant";
+import { Formik } from "formik";
+import { rescheduleSchema } from "./constant";
 import { SnackbarType } from "../../constants/snackbar";
 import { useRescheduleAppointment, useSnackbar } from "../../hooks";
+import { DashboardAppointment } from "./types";
+import { splitDateTime } from "../../utils/dateFormatter";
+import RescheduleFormInner from "./ReschedulFormInner";
+import { DentistAppointment } from "../../hooks/useGetDentistAppointments";
 
 type Props = {
   onCancelReschedule: () => void;
-  id: string;
+  appointment: DashboardAppointment | null;
   refetchAppointments: () => void;
+  appointmentDates: DentistAppointment[] | null;
 };
 
 const RescheduleForm = ({
   onCancelReschedule,
-  id,
+  appointment,
   refetchAppointments,
+  appointmentDates,
 }: Props) => {
   const { sendRequest, loading, errorMessage } = useRescheduleAppointment();
 
@@ -37,47 +37,39 @@ const RescheduleForm = ({
     appointmentDate: Date | string;
     time: string;
   }) => {
-    sendRequest({
-      id,
-      values,
-      onSuccess,
-      onError,
-    });
+    if (appointment?.id) {
+      sendRequest({
+        id: appointment?.id as string,
+        values,
+        onSuccess,
+        onError,
+      });
+    }
   };
+  const initialValueTime = splitDateTime(
+    appointment?.appointmentDate as string
+  ).time;
+
+  const initialValueDate = splitDateTime(
+    appointment?.appointmentDate as string
+  ).date;
 
   return (
     <Formik
-      initialValues={formikInitialValues}
+      initialValues={{
+        appointmentDate: initialValueDate || "",
+        time: initialValueTime || "",
+      }}
       validationSchema={rescheduleSchema}
       onSubmit={onSubmit}
     >
-      <Form className="space-y-4">
-        {errorMessage && <ErrorTypography>{errorMessage}</ErrorTypography>}
-        <div className="flex md:flex-row flex-col justify-between gap-4">
-          <InputLabel
-            id="appointmentDate"
-            label="Select Date"
-            name="appointmentDate"
-            type="date"
-            className="flex-1"
-          />
-          <TimeSelectInput
-            name="time"
-            label="Select Time"
-            id="time"
-            bookedTimes={["10:00", "11:30"]}
-            className="flex-1"
-          />
-        </div>
-        <div className="flex md:flex-row flex-col gap-2 justify-end">
-          <Button variant="primary" type="submit" loading={loading}>
-            Reschedule
-          </Button>
-          <Button variant="secondary" onClick={onCancelReschedule}>
-            Cancel
-          </Button>
-        </div>
-      </Form>
+      <RescheduleFormInner
+        onCancelReschedule={onCancelReschedule}
+        refetchAppointments={refetchAppointments}
+        errorMessage={errorMessage}
+        loading={loading}
+        appointmentDates={appointmentDates || []}
+      />
     </Formik>
   );
 };

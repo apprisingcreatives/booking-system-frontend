@@ -14,7 +14,7 @@ const LoginPage = () => {
 
   const onSuccess = (message: string) => {
     snackbar(message, SnackbarType.SUCCESS, true, 6000);
-    navigate("/");
+    navigate("/dashboard");
   };
 
   const onError = (message: string) => {

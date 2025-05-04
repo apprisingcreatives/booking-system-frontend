@@ -4,7 +4,7 @@ import { AxiosError } from "axios";
 import { User } from "../models";
 import authClient from "../services/authClient";
 
-interface DentistAppointment extends User {
+export interface DentistAppointment extends User {
   appointmentDate: Date | string;
 }
 
@@ -16,6 +16,7 @@ const useGetDentistAppointments = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const sendRequest = async (id: string) => {
+    console.log(`@@@@@@@@@@@@@@@@@@@@@@@@@sendrequest id `, id);
     setLoading(true);
     try {
       const res = await authClient.get(`${API_URL}/appointments/dentist/${id}`);

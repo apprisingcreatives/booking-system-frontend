@@ -2,27 +2,31 @@ import { Button } from "../common";
 import { formatDateTime } from "../../utils/dateFormatter";
 import { useAuth } from "../../hooks";
 import { UserRole } from "../../models";
+import { DashboardAppointment } from "./types";
 
 type Props = {
-  dentist?: string;
-  appointmentDate: Date | string;
   onClickCancel: (id: string) => void;
-  id: string;
-  onClickReschedule: (id: string) => void;
-  patient?: string;
+  onClickReschedule: (appointment: DashboardAppointment) => void;
+  appointment: DashboardAppointment;
 };
 
 const AppointmentCard = ({
-  dentist = "",
-  appointmentDate,
   onClickCancel,
-  id,
   onClickReschedule,
-  patient = "",
+  appointment,
 }: Props) => {
   const { user } = useAuth();
 
   const { role } = user || {};
+
+  const {
+    appointmentDate,
+    patient,
+    dentist: dentistObject,
+    id: id,
+  } = appointment || {};
+
+  const { name: dentist } = dentistObject || {};
   return (
     <li className="p-4 border rounded shadow">
       <p className="font-medium">
@@ -36,7 +40,7 @@ const AppointmentCard = ({
         <Button
           className="text-sm text-blue-600"
           size="sm"
-          onClick={() => onClickReschedule(id)}
+          onClick={() => onClickReschedule(appointment)}
         >
           Reschedule
         </Button>

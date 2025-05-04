@@ -26,3 +26,16 @@ export const combineDateTime = (date: Date | string, time: string) => {
 
   return formattedDateTime;
 };
+
+export const splitDateTime = (dateTime: string) => {
+  if (!dateTime || typeof dateTime !== "string")
+    return { date: null, time: null };
+
+  const parsed = new Date(dateTime);
+  if (isNaN(parsed.getTime())) return { date: null, time: null };
+
+  const date = parsed.toISOString().split("T")[0];
+  const time = parsed.toTimeString().slice(0, 5);
+
+  return { date, time };
+};

@@ -1,8 +1,9 @@
 export type DashboardAppointment = {
-  appointmentDate: Date;
+  appointmentDate: Date | string;
   id: string;
   patient?: string;
   dentist?: {
-    name: string;
+    name?: string;
+    _id?: string;
   };
 };

@@ -3,6 +3,7 @@ import {
   useAuth,
   useCancelAppointment,
   useGetCurrentUserAppointments,
+  useGetDentistAppointments,
   useGetDentistProfile,
   useSnackbar,
 } from "../../hooks";
@@ -14,30 +15,38 @@ import { UserRole } from "../../models";
 import { DashboardAppointment } from "./types";
 
 const Dashboard = () => {
+  const [cancelModal, setCancelModal] = useState({ open: false, id: "" });
+  const [rescheduleModal, setRescheduleModal] = useState<{
+    open: boolean;
+    appointment: DashboardAppointment | null;
+  }>({
+    open: false,
+    appointment: null,
+  });
+
   const { user } = useAuth();
   const { snackbar } = useSnackbar();
+
+  const { sendRequest: sendRequestGetDentistAppointments, appointmentDates } =
+    useGetDentistAppointments();
 
   const {
     sendRequest: fetchAppointments,
     loading,
     appointments,
   } = useGetCurrentUserAppointments();
+
   const {
     sendRequest: fetchDentistProfile,
     data: dentistProfile,
     loading: loadingDentistProfile,
   } = useGetDentistProfile();
+
   const {
     sendRequest: cancelAppointment,
     loading: canceling,
     errorMessage,
   } = useCancelAppointment();
-
-  const [cancelModal, setCancelModal] = useState({ open: false, id: "" });
-  const [rescheduleModal, setRescheduleModal] = useState({
-    open: false,
-    id: "",
-  });
 
   const isDentist = user?.role === UserRole.Dentist;
 
@@ -47,6 +56,7 @@ const Dashboard = () => {
         appointmentDate: appt.appointmentDate,
         patient: appt.patient.name,
         id: appt._id,
+        dentist: appt,
       })) || []
     );
   }, [dentistProfile]);
@@ -68,11 +78,6 @@ const Dashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, isDentist]);
 
-  useEffect(() => {
-    handleFetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const handleCancelSuccess = (message: string) => {
     snackbar(message, SnackbarType.SUCCESS, true, 6000);
     setCancelModal({ open: false, id: "" });
@@ -84,8 +89,10 @@ const Dashboard = () => {
   };
 
   const handleCancelClick = (id: string) => setCancelModal({ open: true, id });
-  const handleRescheduleClick = (id: string) =>
-    setRescheduleModal({ open: true, id });
+
+  const handleRescheduleClick = (appointment: DashboardAppointment) => {
+    setRescheduleModal({ open: true, appointment });
+  };
 
   const handleConfirmCancel = () => {
     cancelAppointment({
@@ -94,6 +101,22 @@ const Dashboard = () => {
       onError: handleCancelError,
     });
   };
+
+  const handleCancelReschedule = () => {
+    setRescheduleModal({ open: false, appointment: null });
+  };
+
+  useEffect(() => {
+    handleFetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (dentistProfile?._id && user?.role === UserRole.Dentist) {
+      sendRequestGetDentistAppointments(dentistProfile?._id as string);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dentistProfile]);
 
   const renderAppointments = () => {
     const list: DashboardAppointment[] = isDentist
@@ -113,9 +136,7 @@ const Dashboard = () => {
         {list.map((appt) => (
           <AppointmentCard
             key={appt.id}
-            id={appt.id}
-            appointmentDate={appt.appointmentDate}
-            patient={appt.patient || appt.dentist?.name}
+            appointment={appt}
             onClickCancel={handleCancelClick}
             onClickReschedule={handleRescheduleClick}
           />
@@ -153,10 +174,11 @@ const Dashboard = () => {
 
       <RescheduleModal
         open={rescheduleModal.open}
-        id={rescheduleModal.id}
+        appointment={rescheduleModal.appointment}
         title="Reschedule Appointment"
-        handleClose={() => setRescheduleModal({ open: false, id: "" })}
+        handleClose={handleCancelReschedule}
         refetchAppointments={handleFetchData}
+        appointmentDates={appointmentDates}
       />
     </div>
   );
