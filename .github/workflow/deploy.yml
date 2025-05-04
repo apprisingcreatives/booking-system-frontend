@@ -1,54 +1,59 @@
-name: Deploy Frontend to EKS
+name: Deploy to EKS
 
 on:
   push:
-    branches:
-      - master
+    branches: [main]
 
 jobs:
   deploy:
-    name: Build, Test, and Deploy Frontend
+    name: Build and Deploy to AWS EKS
     runs-on: ubuntu-latest
 
     env:
-      AWS_REGION: us-east-1
-      ECR_REGISTRY: 736744502716.dkr.ecr.us-east-1.amazonaws.com
-      ECR_REPOSITORY: my-dental-app-frontend
       IMAGE_TAG: ${{ github.sha }}
 
     steps:
+      # Checkout the source code
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
+      # Configure AWS credentials using GitHub Secrets
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Log in to Amazon ECR
+      # Login to Amazon ECR
+      - name: Login to Amazon ECR
+        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Cache Docker layers
-        uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-docker-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-docker-
-
-      - name: Build and push Docker image
+      # Build and push Docker image to ECR
+      - name: Build, tag, and push Docker image
         env:
-          VITE_API_URL_PROD: ${{ secrets.VITE_API_URL_PROD }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          ECR_REPO: ${{ secrets.ECR_REPOSITORY }}
         run: |
-          docker build \
-            --build-arg VITE_API_URL_PROD=$VITE_API_URL_PROD \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "🔧 Building Docker image..."
+          REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO
+          IMAGE_URI=$REPOSITORY_URI:$IMAGE_TAG
 
-      - name: Update Kubernetes deployment
+          docker build -t $IMAGE_URI .
+          docker push $IMAGE_URI
+
+          # Replace <IMAGE_URI> in deployment template without modifying original
+          sed "s|<IMAGE_URI>|$IMAGE_URI|g" k8s/deployment.yaml > k8s/deployment.generated.yaml
+
+      # Update kubeconfig to access your EKS cluster
+      - name: Update kubeconfig for EKS
+        run: aws eks update-kubeconfig --name ${{ secrets.CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
+
+      # Deploy to EKS using kubectl
+      - name: Apply Kubernetes manifests
         run: |
-          aws eks update-kubeconfig --region $AWS_REGION --name my-dental-app-cluster
-          kubectl set image deployment/dental-frontend dental-frontend=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          kubectl rollout status deployment/dental-frontend
+          echo "🚀 Deploying to EKS..."
+          kubectl apply -f k8s/deployment.generated.yaml
+          kubectl apply -f k8s/service.yaml
