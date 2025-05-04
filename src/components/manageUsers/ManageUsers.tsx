@@ -12,8 +12,8 @@ const ManageUsersPage = () => {
     useState<EditUserModalInterface>({ open: false, user: null });
 
   const { user } = useAuth();
-  const { users, loading, sendRequest } = useGetAllUsers();
-
+  const { users, loading, sendRequest, errorMessage } = useGetAllUsers();
+  console.log(`errorMessage`, errorMessage);
   const onEditUserClick = (user: User) => {
     setEditUserModalState({ open: true, user });
   };

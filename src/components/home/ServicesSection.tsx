@@ -1,3 +1,5 @@
+import { useAuth } from "../../hooks";
+import { UserRole } from "../../models";
 import { services } from "./constants";
 
 type Props = {
@@ -5,6 +7,8 @@ type Props = {
 };
 
 const ServicesSection = ({ servicesRef }: Props) => {
+  const { user } = useAuth();
+
   return (
     <section
       id="services"
@@ -33,12 +37,14 @@ const ServicesSection = ({ servicesRef }: Props) => {
         </ul>
 
         <div>
-          <a
-            href="/booking"
-            className="mt-8 inline-block px-8 py-3 bg-blue-600 text-white text-lg font-medium rounded-lg shadow hover:bg-blue-700 transition duration-200"
-          >
-            Schedule an Appointment
-          </a>
+          {user?.role === UserRole.Patient && (
+            <a
+              href="/booking"
+              className="mt-8 inline-block px-8 py-3 bg-blue-600 text-white text-lg font-medium rounded-lg shadow hover:bg-blue-700 transition duration-200"
+            >
+              Schedule an Appointment
+            </a>
+          )}
         </div>
       </div>
     </section>
