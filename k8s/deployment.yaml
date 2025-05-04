@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dental-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dental-frontend
+  template:
+    metadata:
+      labels:
+        app: dental-frontend
+    spec:
+      containers:
+        - name: dental-frontend
+          image: 736744502716.dkr.ecr.us-east-1.amazonaws.com/my-dental-app-frontend:latest
+          ports:
+            - containerPort: 80

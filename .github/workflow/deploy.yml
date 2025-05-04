@@ -1,0 +1,54 @@
+name: Deploy Frontend to EKS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Build, Test, and Deploy Frontend
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: us-east-1
+      ECR_REGISTRY: 736744502716.dkr.ecr.us-east-1.amazonaws.com
+      ECR_REPOSITORY: my-dental-app-frontend
+      IMAGE_TAG: ${{ github.sha }}
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Log in to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-docker-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-docker-
+
+      - name: Build and push Docker image
+        env:
+          VITE_API_URL_PROD: ${{ secrets.VITE_API_URL_PROD }}
+        run: |
+          docker build \
+            --build-arg VITE_API_URL_PROD=$VITE_API_URL_PROD \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Update Kubernetes deployment
+        run: |
+          aws eks update-kubeconfig --region $AWS_REGION --name my-dental-app-cluster
+          kubectl set image deployment/dental-frontend dental-frontend=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          kubectl rollout status deployment/dental-frontend
