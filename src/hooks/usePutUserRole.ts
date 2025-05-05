@@ -7,7 +7,7 @@ import { UserRole } from "../models";
 type SendRequestParams = {
   id: string;
   role: UserRole;
-  onSuccess: (message: string, role: UserRole) => void;
+  onSuccess: (message: string) => void;
   onError: (message: string) => void;
 };
 
@@ -32,8 +32,8 @@ const usePutUserRole = () => {
       );
 
       if (res && res.status === 200) {
-        const { message, user } = res.data;
-        onSuccess(message, user.role);
+        const { message } = res.data;
+        onSuccess(message);
       } else {
         const message = res.data?.message || "Unexpected response status.";
         setErrorMessage(message);

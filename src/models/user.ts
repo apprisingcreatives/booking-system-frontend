@@ -19,6 +19,7 @@ export interface User {
   passwordChangedAt: Date | number;
   correctPassword(candidatePassword: string, userPassword: string): boolean;
   passwordConfirm: string;
+  hasDentistProfile?: boolean;
 }
 
 export interface Dentist {

@@ -2,7 +2,7 @@ import { Form, Formik } from "formik";
 import { Button, ErrorTypography, InputLabel, SelectInput } from "../common";
 import { User, UserRole } from "../../models";
 import { options, validationSchema } from "./constants";
-import { useAuth, usePutUserRole, useSnackbar } from "../../hooks";
+import { usePutUserRole, useSnackbar } from "../../hooks";
 import { SnackbarType } from "../../constants/snackbar";
 
 type Props = {
@@ -12,13 +12,11 @@ type Props = {
 };
 
 const EditUserForm = ({ user, handleClose, refetchUsers }: Props) => {
-  const { updateUserRole } = useAuth();
   const { sendRequest, loading, errorMessage } = usePutUserRole();
   const { snackbar } = useSnackbar();
 
-  const onSuccess = (message: string, role: UserRole) => {
+  const onSuccess = (message: string) => {
     snackbar(message, SnackbarType.SUCCESS, true);
-    updateUserRole(role);
     handleClose();
     refetchUsers();
   };

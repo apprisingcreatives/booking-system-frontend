@@ -2,7 +2,6 @@ import { Formik, Form } from "formik";
 import { Button, InputLabel } from "../common";
 import { loginInputFields, loginValidation } from "./constants";
 import { useAuth, useSnackbar } from "../../hooks";
-
 import { RenderInputFields } from "./types";
 import { useNavigate } from "react-router-dom";
 import { SnackbarType } from "../../constants/snackbar";

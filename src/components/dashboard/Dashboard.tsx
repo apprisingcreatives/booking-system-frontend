@@ -13,8 +13,11 @@ import RescheduleModal from "./RescheduleModal";
 import { SnackbarType } from "../../constants/snackbar";
 import { UserRole } from "../../models";
 import { DashboardAppointment } from "./types";
+import DashboardNotifModal from "./DashboardNotifModal";
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  const { role, hasDentistProfile } = user || {};
   const [cancelModal, setCancelModal] = useState({ open: false, id: "" });
   const [rescheduleModal, setRescheduleModal] = useState<{
     open: boolean;
@@ -23,8 +26,18 @@ const Dashboard = () => {
     open: false,
     appointment: null,
   });
+  console.log(
+    ` role === UserRole.Dentist && !hasDentistProfile`,
+    role === UserRole.Dentist && !hasDentistProfile
+  );
+  const [openNotifModal, setOpenNotifModal] = useState(
+    role === UserRole.Dentist && !hasDentistProfile
+  );
 
-  const { user } = useAuth();
+  const handleCloseNotifModal = () => {
+    setOpenNotifModal(false);
+  };
+
   const { snackbar } = useSnackbar();
 
   const { sendRequest: sendRequestGetDentistAppointments, appointmentDates } =
@@ -44,7 +57,7 @@ const Dashboard = () => {
 
   const {
     sendRequest: cancelAppointment,
-    loading: canceling,
+    loading: loadingCancel,
     errorMessage,
   } = useCancelAppointment();
 
@@ -168,7 +181,7 @@ const Dashboard = () => {
         messageContent="Are you sure you want to cancel your appointment?"
         handleClose={() => setCancelModal({ open: false, id: "" })}
         onYesClick={handleConfirmCancel}
-        loading={canceling}
+        loading={loadingCancel}
         maxSize="md"
       />
 
@@ -179,6 +192,12 @@ const Dashboard = () => {
         handleClose={handleCancelReschedule}
         refetchAppointments={handleFetchData}
         appointmentDates={appointmentDates}
+      />
+      <DashboardNotifModal
+        open={openNotifModal}
+        handleClose={handleCloseNotifModal}
+        title="Welcome!"
+        userName={user?.name || ""}
       />
     </div>
   );

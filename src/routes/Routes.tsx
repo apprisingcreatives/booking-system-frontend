@@ -64,7 +64,7 @@ const AppRoutes = () => {
             }
           />
           <Route
-            path="/profile/*"
+            path="/profile/:view"
             element={
               <ProtectedRoute>
                 <UserProfilePage />

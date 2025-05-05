@@ -1,11 +1,11 @@
 import { useMemo } from "react";
-import { ProfileViews } from "./Profile";
+
 import { useAuth } from "../../hooks";
 import { UserRole } from "../../models";
 
 type Props = {
-  currentView: ProfileViews;
-  onChangeView: (view: ProfileViews) => void;
+  currentView: string;
+  onChangeView: (view: string) => void;
 };
 
 const Sidebar = ({ currentView, onChangeView }: Props) => {
@@ -13,9 +13,9 @@ const Sidebar = ({ currentView, onChangeView }: Props) => {
   const { role } = user || {};
 
   const navItems = useMemo(() => {
-    const baseItems: { label: string; view: ProfileViews }[] = [
-      { label: "Update Profile", view: "profile" },
-      { label: "Change Password", view: "password" },
+    const baseItems: { label: string; view: string }[] = [
+      { label: "Update Profile", view: "update-profile" },
+      { label: "Change Password", view: "update-password" },
     ];
 
     if (role === UserRole.Dentist) {
@@ -27,7 +27,7 @@ const Sidebar = ({ currentView, onChangeView }: Props) => {
 
     return baseItems;
   }, [role]);
-  const getButtonClass = (view: ProfileViews) =>
+  const getButtonClass = (view: string) =>
     `w-full text-left px-4 py-2 rounded-md transition cursor-pointer ${
       currentView === view
         ? "bg-blue-100 text-blue-700 font-semibold"
@@ -41,7 +41,7 @@ const Sidebar = ({ currentView, onChangeView }: Props) => {
           <button
             key={view}
             onClick={() => onChangeView(view)}
-            className={getButtonClass(view as ProfileViews)}
+            className={getButtonClass(view)}
           >
             {label}
           </button>

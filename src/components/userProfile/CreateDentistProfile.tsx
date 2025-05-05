@@ -11,18 +11,19 @@ import { SnackbarType } from "../../constants/snackbar";
 import { useEffect } from "react";
 
 const CreateDentistProfile = () => {
-  const { user } = useAuth();
+  const { user, getUser } = useAuth();
   const { sendRequest, loading } = usePutDentistProfile();
   const {
     sendRequest: sendRequestGetDentistProfile,
     data: dentistProfileData,
   } = useGetDentistProfile();
   const { snackbar } = useSnackbar();
-  const { _id: userId } = user || {};
+  const { _id: userId, hasDentistProfile } = user || {};
   const { specialization, phone } = dentistProfileData || {};
 
   const onSuccess = (message: string) => {
     snackbar(message, SnackbarType.SUCCESS, true, 6000);
+    getUser();
   };
 
   const onError = (message: string) => {
@@ -34,7 +35,7 @@ const CreateDentistProfile = () => {
   };
 
   useEffect(() => {
-    if (userId) {
+    if (userId && hasDentistProfile) {
       sendRequestGetDentistProfile(userId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

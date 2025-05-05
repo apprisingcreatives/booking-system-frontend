@@ -16,7 +16,6 @@ const useGetDentistAppointments = () => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const sendRequest = async (id: string) => {
-    console.log(`@@@@@@@@@@@@@@@@@@@@@@@@@sendrequest id `, id);
     setLoading(true);
     try {
       const res = await authClient.get(`${API_URL}/appointments/dentist/${id}`);

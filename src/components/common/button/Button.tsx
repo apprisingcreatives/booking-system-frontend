@@ -17,7 +17,7 @@ const Button = ({
   ...props
 }: ButtonProps) => {
   const baseStyles =
-    "rounded-lg font-medium transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer  md:w-fit w-full";
+    "rounded-lg font-medium transition duration-200 cursor-pointer  md:w-fit w-full";
 
   const sizeStyles = {
     sm: "px-3 py-1 text-sm",
