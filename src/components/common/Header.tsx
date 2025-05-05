@@ -56,7 +56,7 @@ const Header = ({
           Book appointment
         </Link>
       )}
-      <Link to="/profile" className={commonLinkStyle}>
+      <Link to="/profile/update-profile" className={commonLinkStyle}>
         Profile
       </Link>
       <button className={commonLinkStyle} onClick={logout}>
