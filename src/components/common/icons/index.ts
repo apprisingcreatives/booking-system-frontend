@@ -1,4 +1,4 @@
-import { FaCheckCircle } from "react-icons/fa";
+import { FaCheckCircle, FaBars } from "react-icons/fa";
 import { MdClose } from "react-icons/md";
 import {
   IoMdCloseCircle,
@@ -13,3 +13,4 @@ export const CloseIconAlt = IoMdCloseCircle;
 export const InformationCircleOutlineIcon = IoMdInformationCircleOutline;
 export const WarningOutlineIcon = IoWarningOutline;
 export const CloseCircleOutline = IoIosCloseCircleOutline;
+export const MenuIcon = FaBars;
