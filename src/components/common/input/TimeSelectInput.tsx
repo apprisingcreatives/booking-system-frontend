@@ -1,5 +1,5 @@
-import clsx from "clsx";
-import { FieldHookConfig, useField } from "formik";
+import clsx from 'clsx';
+import { FieldHookConfig, useField } from 'formik';
 
 type TimeSelectInputProps = {
   label: string;
@@ -14,8 +14,8 @@ const generateTimeSlots = (): string[] => {
   const end = 17 * 60; // 5:00 PM
 
   for (let mins = start; mins < end; mins += 30) {
-    const hours = String(Math.floor(mins / 60)).padStart(2, "0");
-    const minutes = String(mins % 60).padStart(2, "0");
+    const hours = String(Math.floor(mins / 60)).padStart(2, '0');
+    const minutes = String(mins % 60).padStart(2, '0');
     times.push(`${hours}:${minutes}`);
   }
 
@@ -25,7 +25,7 @@ const generateTimeSlots = (): string[] => {
 const TimeSelectInput = ({
   label,
   bookedTimes,
-  className = "",
+  className = '',
   onChange,
   ...props
 }: TimeSelectInputProps) => {
@@ -41,24 +41,24 @@ const TimeSelectInput = ({
   };
 
   return (
-    <div className={clsx("flex flex-col gap-y-1", className)}>
-      <label htmlFor={props.id || props.name} className="block font-medium">
+    <div className={clsx('flex flex-col gap-y-1', className)}>
+      <label htmlFor={props.id || props.name} className='block font-medium'>
         {label}
       </label>
       <select
         {...field}
         {...props}
         onChange={handleChange}
-        className="p-2 border rounded w-full"
+        className='p-2 border rounded w-full'
       >
-        <option value="">Select Time</option>
+        <option value=''>Select Time</option>
         {times.map((time) => (
           <option key={time} value={time} disabled={bookedTimes.includes(time)}>
             {time}
           </option>
         ))}
       </select>
-      {hasError && <p className="text-red-600 text-sm">{meta.error}</p>}
+      {hasError && <p className='text-red-600 text-sm'>{meta.error}</p>}
     </div>
   );
 };
