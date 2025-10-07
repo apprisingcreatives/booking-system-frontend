@@ -1,13 +1,12 @@
-import { Button } from "../common";
-import { formatDateTime } from "../../utils/dateFormatter";
-import { useAuth } from "../../hooks";
-import { UserRole } from "../../models";
-import { DashboardAppointment } from "./types";
+import { formatDateTime } from '../../utils/dateFormatter';
+import { useAuth } from '../../hooks';
+import { Appointment, UserRole } from '../../models';
+import Button from '../common/Button';
 
 type Props = {
   onClickCancel: (id: string) => void;
-  onClickReschedule: (appointment: DashboardAppointment) => void;
-  appointment: DashboardAppointment;
+  onClickReschedule: (appointment: Appointment) => void;
+  appointment: Appointment;
 };
 
 const AppointmentCard = ({
@@ -22,36 +21,55 @@ const AppointmentCard = ({
   const {
     appointmentDate,
     patient,
-    dentist: dentistObject,
+    chiropractor: chiropractorObject,
     id: id,
   } = appointment || {};
 
-  const { name: dentist } = dentistObject || {};
+  const { name: chiropractor = '' } = chiropractorObject || {};
   return (
-    <li className="p-4 border rounded shadow">
-      <p className="font-medium">
-        {`${role === UserRole.Dentist ? "" : "Dr."} ${
-          dentist || patient
-        } - ${formatDateTime({
-          date: appointmentDate,
-        })}`}
-      </p>
-      <div className="flex gap-2 mt-2">
-        <Button
-          className="text-sm text-blue-600"
-          size="sm"
-          onClick={() => onClickReschedule(appointment)}
-        >
-          Reschedule
-        </Button>
-        <Button
-          className="text-sm text-red-600"
-          variant="secondary"
-          size="sm"
-          onClick={() => onClickCancel(id)}
-        >
-          Cancel
-        </Button>
+    <li className='bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden'>
+      <div className='p-6'>
+        <div className='flex items-start justify-between'>
+          <div className='flex-1'>
+            <div className='flex items-center space-x-3 mb-3'>
+              <div className='w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center'>
+                <span className='text-white text-sm font-semibold'>
+                  {role === UserRole.ClientUser ? '👨‍⚕️' : '👤'}
+                </span>
+              </div>
+              <div>
+                <h3 className='text-lg font-semibold text-gray-900'>
+                  {role === UserRole.ClientUser ? '' : 'Dr.'}{' '}
+                  {chiropractor || patient?.fullName}
+                </h3>
+                <p className='text-sm text-gray-500'>
+                  {formatDateTime({ date: appointmentDate })}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className='flex gap-3 mt-4'>
+          <Button
+            variant='outline'
+            size='sm'
+            onClick={() => onClickReschedule(appointment)}
+            className='flex-1 border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-300'
+          >
+            <span className='mr-2'>📅</span>
+            Reschedule
+          </Button>
+          <Button
+            variant='outline'
+            size='sm'
+            onClick={() => onClickCancel(id)}
+            className='flex-1 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300'
+          >
+            <span className='mr-2'>❌</span>
+            Cancel
+          </Button>
+        </div>
       </div>
     </li>
   );

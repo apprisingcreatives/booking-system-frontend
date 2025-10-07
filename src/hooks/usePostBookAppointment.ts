@@ -1,25 +1,25 @@
-import { useState } from "react";
-import authClient from "../services/authClient";
-import { API_URL } from "../constants/api";
-import { AxiosError } from "axios";
-import { combineDateTime } from "../utils/dateFormatter";
+import { useState } from 'react';
+import authClient from '../services/authClient';
+import { API_URL } from '../constants/api';
+import { AxiosError } from 'axios';
+import { combineDateTime } from '../utils/dateFormatter';
 
 type SendRequestParams = {
   values: {
-    dentistId: string;
+    chiropractorId: string;
     appointmentDate: Date | string;
-    reason: string;
+    serviceId: string;
     time: string;
   };
   onSuccess: (message: string) => void;
   onError: (message: string) => void;
 };
 
-const GENERAL_ERROR = "Could not create booking, try again later";
-const GENERAL_SUCCESS = "Successfully booked appointment.";
+const GENERAL_ERROR = 'Could not create booking, try again later';
+const GENERAL_SUCCESS = 'Successfully booked appointment.';
 
 const usePostBookAppointment = () => {
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const sendRequest = async ({
     values,
@@ -27,14 +27,14 @@ const usePostBookAppointment = () => {
     onError,
   }: SendRequestParams) => {
     setLoading(true);
-    const { appointmentDate, time, dentistId, reason } = values;
+    const { appointmentDate, time, chiropractorId, serviceId } = values;
 
     const appointmentDateTime = combineDateTime(appointmentDate, time);
 
     const params = {
-      dentist: dentistId,
+      chiropractor: chiropractorId,
       appointmentDate: appointmentDateTime,
-      reason,
+      serviceId,
     };
 
     try {
@@ -48,7 +48,7 @@ const usePostBookAppointment = () => {
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       const message =
-        error.response?.data?.message || "An error occurred. Please try again.";
+        error.response?.data?.message || 'An error occurred. Please try again.';
       setErrorMessage(message);
       onError(message);
     } finally {

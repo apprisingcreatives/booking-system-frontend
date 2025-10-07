@@ -1,15 +1,16 @@
-import { memo } from "react";
-import { DentistAppointment } from "../../hooks/useGetDentistAppointments";
-import { Modal, ModalContent } from "../common";
-import RescheduleForm from "./RescheduleForm";
-import { DashboardAppointment } from "./types";
+import { memo } from 'react';
+import { DentistAppointment } from '../../hooks/useGetDentistAppointments';
+import { Modal } from '../common';
+import RescheduleForm from './RescheduleForm';
+import { Appointment } from '../../models';
+import ModalContent from '../common/modal/ModalContent';
 
 type Props = {
   open: boolean;
   handleClose: () => void;
   title: string;
   refetchAppointments: () => void;
-  appointment: DashboardAppointment | null;
+  appointment: Appointment | null;
   appointmentDates: DentistAppointment[] | null;
 };
 const RescheduleModal = ({
@@ -21,7 +22,7 @@ const RescheduleModal = ({
   refetchAppointments,
 }: Props) => {
   return (
-    <Modal open={open} title={title} toggle={handleClose}>
+    <Modal isOpen={open} title={title} onClose={handleClose}>
       <ModalContent>
         <RescheduleForm
           appointmentDates={appointmentDates}

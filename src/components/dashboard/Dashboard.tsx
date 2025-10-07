@@ -1,99 +1,80 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import {
   useAuth,
   useCancelAppointment,
   useGetCurrentUserAppointments,
-  useGetDentistAppointments,
-  useGetDentistProfile,
+  useGetFacilityAppointments,
   useSnackbar,
-} from "../../hooks";
-import AppointmentCard from "./AppointmentCard";
-import { CircularLoading, ConfirmModal, ErrorTypography } from "../common";
-import RescheduleModal from "./RescheduleModal";
-import { SnackbarType } from "../../constants/snackbar";
-import { UserRole } from "../../models";
-import { DashboardAppointment } from "./types";
-import DashboardNotifModal from "./DashboardNotifModal";
+} from '../../hooks';
+import AppointmentCard from './AppointmentCard';
+import { CircularLoading, ErrorTypography } from '../common';
+import RescheduleModal from './RescheduleModal';
+import { SnackbarType } from '../../constants/snackbar';
+import { Appointment, UserRole } from '../../models';
+import ConfirmModal from '../common/modal/ConfirmModal';
+import Button from '../common/Button';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const { role, hasDentistProfile } = user || {};
-  const [cancelModal, setCancelModal] = useState({ open: false, id: "" });
+  const { facilityId } = user || {};
+  const [cancelModal, setCancelModal] = useState({ open: false, id: '' });
   const [rescheduleModal, setRescheduleModal] = useState<{
     open: boolean;
-    appointment: DashboardAppointment | null;
+    appointment: Appointment | null;
   }>({
     open: false,
     appointment: null,
   });
-  console.log(
-    ` role === UserRole.Dentist && !hasDentistProfile`,
-    role === UserRole.Dentist && !hasDentistProfile
-  );
-  const [openNotifModal, setOpenNotifModal] = useState(
-    role === UserRole.Dentist && !hasDentistProfile
-  );
 
-  const handleCloseNotifModal = () => {
-    setOpenNotifModal(false);
-  };
+  // const [openNotifModal, setOpenNotifModal] = useState(
+  //   role === UserRole.ClientUser && !hasDentistProfile
+  // );
 
   const { snackbar } = useSnackbar();
-
-  const { sendRequest: sendRequestGetDentistAppointments, appointmentDates } =
-    useGetDentistAppointments();
 
   const {
     sendRequest: fetchAppointments,
     loading,
-    appointments,
+    appointments: patientAppointments,
   } = useGetCurrentUserAppointments();
 
   const {
-    sendRequest: fetchDentistProfile,
-    data: dentistProfile,
-    loading: loadingDentistProfile,
-  } = useGetDentistProfile();
-
+    appointments: facilityAppointments,
+    errorMessage: facilityErrorMessage,
+    loading: facilityLoading,
+    sendRequest: fetchFacilityAppointments,
+  } = useGetFacilityAppointments();
   const {
     sendRequest: cancelAppointment,
     loading: loadingCancel,
     errorMessage,
   } = useCancelAppointment();
 
-  const isDentist = user?.role === UserRole.Dentist;
+  // const handleCloseNotifModal = () => {
+  //   setOpenNotifModal(false);
+  // };
 
-  const dentistAppointments: DashboardAppointment[] = useMemo(() => {
-    return (
-      dentistProfile?.appointments.map((appt) => ({
-        appointmentDate: appt.appointmentDate,
-        patient: appt.patient.name,
-        id: appt._id,
-        dentist: appt,
-      })) || []
-    );
-  }, [dentistProfile]);
-
-  const patientAppointments: DashboardAppointment[] = useMemo(() => {
-    return (
-      appointments?.map((appt) => ({
-        appointmentDate: appt.appointmentDate,
-        id: appt._id,
-        dentist: appt.dentist,
-      })) || []
-    );
-  }, [appointments]);
+  const facilityUser = useMemo(
+    () =>
+      user?.role === UserRole.ClientUser || user?.role === UserRole.ClientAdmin,
+    [user]
+  );
 
   const handleFetchData = useCallback(() => {
     if (!user) return;
-    if (isDentist) fetchDentistProfile(user._id);
-    else fetchAppointments(user._id);
+    if (facilityUser) {
+      fetchFacilityAppointments(facilityId as string);
+      return;
+    } else fetchAppointments(user._id);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, isDentist]);
+  }, [user, facilityUser]);
 
   const handleCancelSuccess = (message: string) => {
     snackbar(message, SnackbarType.SUCCESS, true, 6000);
-    setCancelModal({ open: false, id: "" });
+    setCancelModal({ open: false, id: '' });
     handleFetchData();
   };
 
@@ -103,7 +84,7 @@ const Dashboard = () => {
 
   const handleCancelClick = (id: string) => setCancelModal({ open: true, id });
 
-  const handleRescheduleClick = (appointment: DashboardAppointment) => {
+  const handleRescheduleClick = (appointment: Appointment) => {
     setRescheduleModal({ open: true, appointment });
   };
 
@@ -119,33 +100,47 @@ const Dashboard = () => {
     setRescheduleModal({ open: false, appointment: null });
   };
 
+  const navigate = useNavigate();
+  const handleBookAppointment = () => {
+    navigate('/booking');
+  };
+
   useEffect(() => {
     handleFetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    if (dentistProfile?._id && user?.role === UserRole.Dentist) {
-      sendRequestGetDentistAppointments(dentistProfile?._id as string);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dentistProfile]);
-
   const renderAppointments = () => {
-    const list: DashboardAppointment[] = isDentist
-      ? dentistAppointments
+    const list: Appointment[] | null = facilityUser
+      ? facilityAppointments
       : patientAppointments;
 
     if (!list?.length) {
       return (
-        <p className="text-center text-xl font-semibold italic">
-          You currently don't have any appointments.
-        </p>
+        <div className='text-center py-16 gap-y-2 flex flex-col items-center'>
+          <div className='w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6'>
+            <span className='text-4xl'>📅</span>
+          </div>
+          <h3 className='text-xl font-semibold text-gray-900 mb-2'>
+            No appointments yet
+          </h3>
+          {user?.role === UserRole.Patient && (
+            <p className='text-gray-500 max-w-md mx-auto'>
+              You don't have any appointments scheduled. Book your first
+              appointment to get started!
+            </p>
+          )}
+          <Button variant='primary' onClick={handleBookAppointment}>
+            {user?.role === UserRole.Patient
+              ? 'Book Appointment'
+              : 'Create New Appointment'}
+          </Button>
+        </div>
       );
     }
 
     return (
-      <ul className="space-y-4">
+      <ul className='space-y-4'>
         {list.map((appt) => (
           <AppointmentCard
             key={appt.id}
@@ -158,47 +153,55 @@ const Dashboard = () => {
     );
   };
 
-  if (loading || loadingDentistProfile) {
+  if (loading || facilityLoading) {
     return (
-      <div className="flex justify-center items-center w-full">
-        <CircularLoading size="lg" />
+      <div className='flex justify-center items-center w-full'>
+        <CircularLoading size='lg' />
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-3xl p-8 mx-auto">
-      <h2 className="text-2xl font-semibold mb-4 text-blue-700">
-        Your Appointments
-      </h2>
+    <div className='w-full p-8'>
+      <div className='mb-8'>
+        <h2 className='text-3xl font-bold text-gray-900 mb-2'>
+          Your Appointments
+        </h2>
+        <p className='text-gray-600'>
+          View and manage your upcoming appointments
+        </p>
+      </div>
 
       {errorMessage && <ErrorTypography>{errorMessage}</ErrorTypography>}
+      {facilityErrorMessage && (
+        <ErrorTypography>{facilityErrorMessage}</ErrorTypography>
+      )}
       {renderAppointments()}
 
       <ConfirmModal
         open={cancelModal.open}
-        title="Cancel Appointment"
-        messageContent="Are you sure you want to cancel your appointment?"
-        handleClose={() => setCancelModal({ open: false, id: "" })}
+        title='Cancel Appointment'
+        messageContent='Are you sure you want to cancel your appointment?'
+        handleClose={() => setCancelModal({ open: false, id: '' })}
         onYesClick={handleConfirmCancel}
         loading={loadingCancel}
-        maxSize="md"
+        maxSize='md'
       />
 
       <RescheduleModal
         open={rescheduleModal.open}
         appointment={rescheduleModal.appointment}
-        title="Reschedule Appointment"
+        title='Reschedule Appointment'
         handleClose={handleCancelReschedule}
         refetchAppointments={handleFetchData}
-        appointmentDates={appointmentDates}
+        appointmentDates={null}
       />
-      <DashboardNotifModal
+      {/* <DashboardNotifModal
         open={openNotifModal}
         handleClose={handleCloseNotifModal}
-        title="Welcome!"
-        userName={user?.name || ""}
-      />
+        title='Welcome!'
+        userName={user?.fullName || ''}
+      /> */}
     </div>
   );
 };

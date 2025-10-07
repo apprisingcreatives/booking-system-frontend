@@ -1,15 +1,15 @@
-import { Formik } from "formik";
-import { rescheduleSchema } from "./constant";
-import { SnackbarType } from "../../constants/snackbar";
-import { useRescheduleAppointment, useSnackbar } from "../../hooks";
-import { DashboardAppointment } from "./types";
-import { splitDateTime } from "../../utils/dateFormatter";
-import RescheduleFormInner from "./ReschedulFormInner";
-import { DentistAppointment } from "../../hooks/useGetDentistAppointments";
+import { Formik } from 'formik';
+import { rescheduleSchema } from './constant';
+import { SnackbarType } from '../../constants/snackbar';
+import { useRescheduleAppointment, useSnackbar } from '../../hooks';
+import { splitDateTime } from '../../utils/dateFormatter';
+import RescheduleFormInner from './ReschedulFormInner';
+import { DentistAppointment } from '../../hooks/useGetDentistAppointments';
+import { Appointment } from '../../models';
 
 type Props = {
   onCancelReschedule: () => void;
-  appointment: DashboardAppointment | null;
+  appointment: Appointment | null;
   refetchAppointments: () => void;
   appointmentDates: DentistAppointment[] | null;
 };
@@ -47,18 +47,18 @@ const RescheduleForm = ({
     }
   };
   const initialValueTime = splitDateTime(
-    appointment?.appointmentDate as string
+    appointment?.appointmentDate as Date
   ).time;
 
   const initialValueDate = splitDateTime(
-    appointment?.appointmentDate as string
+    appointment?.appointmentDate as Date
   ).date;
 
   return (
     <Formik
       initialValues={{
-        appointmentDate: initialValueDate || "",
-        time: initialValueTime || "",
+        appointmentDate: initialValueDate || '',
+        time: initialValueTime || '',
       }}
       validationSchema={rescheduleSchema}
       onSubmit={onSubmit}

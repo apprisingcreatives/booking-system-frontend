@@ -1,13 +1,14 @@
-import { Formik, Form } from "formik";
+import { Formik, Form } from 'formik';
 import {
   formikPasswordInitialValues,
   passwordFields,
   passwordSchema,
-} from "./constants";
-import { Button, InputLabel } from "../common";
-import { useAuth, usePutUserPassword, useSnackbar } from "../../hooks";
-import { SnackbarType } from "../../constants/snackbar";
-import { UpdateUserPassword } from "../../hooks/usePutUserPassword";
+} from './constants';
+import { useAuth, usePutUserPassword, useSnackbar } from '../../hooks';
+import { SnackbarType } from '../../constants/snackbar';
+import { UpdateUserPassword } from '../../hooks/usePutUserPassword';
+import InputLabel from '../common/input/InputLabel';
+import Button from '../common/Button';
 
 const UpdatePasswordForm = () => {
   const { user, getUser } = useAuth();
@@ -24,11 +25,11 @@ const UpdatePasswordForm = () => {
   };
 
   const onSubmit = (values: UpdateUserPassword) => {
-    sendRequest({ values, onSuccess, onError, id: user?._id || "" });
+    sendRequest({ values, onSuccess, onError, id: user?._id || '' });
   };
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">
+    <div className='bg-white p-6 rounded-lg shadow'>
+      <h2 className='text-xl font-semibold mb-4 text-gray-800'>
         Change Password
       </h2>
 
@@ -37,18 +38,18 @@ const UpdatePasswordForm = () => {
         validationSchema={passwordSchema}
         onSubmit={onSubmit}
       >
-        <Form className="space-y-4">
+        <Form className='space-y-4'>
           {passwordFields.map(({ id, name, label }) => (
             <InputLabel
               key={id}
               id={id}
               name={name}
-              type="password"
+              type='password'
               label={label}
             />
           ))}
-          <div className="flex justify-end">
-            <Button variant="primary" type="submit" loading={loading}>
+          <div className='flex justify-end'>
+            <Button variant='primary' type='submit' loading={loading}>
               Update Password
             </Button>
           </div>

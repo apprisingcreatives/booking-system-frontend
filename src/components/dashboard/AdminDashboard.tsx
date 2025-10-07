@@ -1,30 +1,22 @@
-import { Card } from "../common";
-import { menuLinks } from "./constant";
-import { Link } from "react-router-dom";
+import { User, UserRole } from '../../models';
+import SuperAdminDashboard from './SuperAdminDashboard';
+import ClientAdminDashboard from './ClientAdminDashboard';
 
-const AdminDashboard = () => {
-  const renderMenuCards = () => {
-    return (
-      menuLinks &&
-      Array.isArray(menuLinks) &&
-      menuLinks.length > 0 &&
-      menuLinks.map((menuLink) => (
-        <Card key={menuLink.label}>
-          <Link to={menuLink.link}>{menuLink.label}</Link>
-        </Card>
-      ))
-    );
-  };
+const AdminDashboard = ({ currentUser }: { currentUser: User }) => {
+  if (!currentUser) return null;
 
-  return (
-    <div className="w-full max-w-7xl p-8 mx-auto">
-      <h2 className="text-2xl font-semibold mb-4 text-blue-700">
-        Admin Dashboard
-      </h2>
-
-      {renderMenuCards()}
-    </div>
-  );
+  switch (currentUser.role) {
+    case UserRole.SuperAdmin:
+      return <SuperAdminDashboard />;
+    case UserRole.ClientAdmin:
+      return <ClientAdminDashboard currentUser={currentUser} />;
+    default:
+      return (
+        <div className='min-h-screen flex items-center justify-center bg-gray-50 text-gray-700'>
+          <p>You don’t have access to the admin dashboard.</p>
+        </div>
+      );
+  }
 };
 
 export default AdminDashboard;

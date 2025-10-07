@@ -1,23 +1,27 @@
-import { useMemo } from "react";
-import { useFormikContext } from "formik";
-import { InputLabel, SelectInput, TimeSelectInput } from "../common";
-import { Dentist } from "../../models";
-import { services } from "./constants";
-import { useGetDentistAppointments } from "../../hooks";
+import { useMemo } from 'react';
+import { useFormikContext } from 'formik';
+import { services } from './constants';
+import SelectInput from '../common/input/SelectInput';
+import InputLabel from '../common/input/InputLabel';
+import TimeSelectInput from '../common/input/TimeSelectInput';
+import { useGetFacilityAppointments } from '../../hooks';
 
 type Props = {
-  dentists: Dentist[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  dentists: any[];
 };
 
 const InputFields = ({ dentists }: Props) => {
-  const { sendRequest, appointmentDates } = useGetDentistAppointments();
+  const { sendRequest, appointments } = useGetFacilityAppointments();
   const { values } = useFormikContext<{
     dentistId: string;
     appointmentDate: string;
     time: string;
     reason: string;
   }>();
-
+  const appointmentDates = useMemo(() => {
+    return appointments?.map((appointment) => appointment.appointmentDate);
+  }, [appointments]);
   const options = useMemo(() => {
     if (!Array.isArray(dentists)) return [];
     return dentists.map((dentist) => ({
@@ -32,12 +36,12 @@ const InputFields = ({ dentists }: Props) => {
     return (
       appointmentDates
         ?.filter((appt) => {
-          const apptDate = new Date(appt.appointmentDate);
-          const datePart = apptDate.toISOString().split("T")[0];
+          const apptDate = new Date(appt);
+          const datePart = apptDate.toISOString().split('T')[0];
           return datePart === values.appointmentDate;
         })
         .map((appt) => {
-          const apptDate = new Date(appt.appointmentDate);
+          const apptDate = new Date(appt);
           return apptDate.toTimeString().slice(0, 5);
         }) || []
     );
@@ -53,27 +57,27 @@ const InputFields = ({ dentists }: Props) => {
   return (
     <>
       <SelectInput
-        label="Select Dentist"
+        label='Select Dentist'
         options={options}
-        name="dentistId"
+        name='dentistId'
         onChange={onDentistChange}
       />
-      <SelectInput label="Reason" options={services} name="reason" />
-      <div className="flex justify-between gap-4">
+      <SelectInput label='Reason' options={services} name='reason' />
+      <div className='flex justify-between gap-4'>
         <InputLabel
-          id="appointmentDate"
-          label="Select Date"
-          name="appointmentDate"
-          type="date"
-          className="flex-1"
+          id='appointmentDate'
+          label='Select Date'
+          name='appointmentDate'
+          type='date'
+          className='flex-1'
           minDateToday
         />
         <TimeSelectInput
-          name="time"
-          label="Select Time"
-          id="time"
+          name='time'
+          label='Select Time'
+          id='time'
           bookedTimes={bookedTimesForDate}
-          className="flex-1"
+          className='flex-1'
         />
       </div>
     </>

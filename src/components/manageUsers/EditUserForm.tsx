@@ -1,9 +1,12 @@
-import { Form, Formik } from "formik";
-import { Button, ErrorTypography, InputLabel, SelectInput } from "../common";
-import { User, UserRole } from "../../models";
-import { options, validationSchema } from "./constants";
-import { usePutUserRole, useSnackbar } from "../../hooks";
-import { SnackbarType } from "../../constants/snackbar";
+import { Form, Formik } from 'formik';
+import { ErrorTypography } from '../common';
+import { User, UserRole } from '../../models';
+import { options, validationSchema } from './constants';
+import { usePutUserRole, useSnackbar } from '../../hooks';
+import { SnackbarType } from '../../constants/snackbar';
+import InputLabel from '../common/input/InputLabel';
+import SelectInput from '../common/input/SelectInput';
+import Button from '../common/Button';
 
 type Props = {
   user: User | null;
@@ -26,35 +29,35 @@ const EditUserForm = ({ user, handleClose, refetchUsers }: Props) => {
   };
 
   const onSubmit = (role: UserRole) => {
-    sendRequest({ id: user?._id || "", onSuccess, onError, role });
+    sendRequest({ id: user?._id || '', onSuccess, onError, role });
   };
 
   return (
     <Formik
       initialValues={{
-        email: user?.email || "",
+        email: user?.email || '',
         role: user?.role || UserRole.Patient,
       }}
       validationSchema={validationSchema}
       onSubmit={(values) => onSubmit(values.role)}
     >
-      <Form className="space-y-4">
+      <Form className='space-y-4'>
         {errorMessage && <ErrorTypography>{errorMessage}</ErrorTypography>}
         <InputLabel
-          name="email"
-          label="Email"
-          id="email"
-          type="email"
+          name='email'
+          label='Email'
+          id='email'
+          type='email'
           disabled
         />
 
-        <SelectInput name="role" label="Role" id="role" options={options} />
+        <SelectInput name='role' label='Role' id='role' options={options} />
 
-        <div className="flex justify-end gap-2 pt-4">
-          <Button type="button" variant="secondary" onClick={handleClose}>
+        <div className='flex justify-end gap-2 pt-4'>
+          <Button type='button' variant='secondary' onClick={handleClose}>
             Cancel
           </Button>
-          <Button type="submit" variant="primary" loading={loading}>
+          <Button type='submit' variant='primary' loading={loading}>
             Save
           </Button>
         </div>

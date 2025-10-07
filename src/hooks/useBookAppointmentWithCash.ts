@@ -2,12 +2,11 @@ import { useState, useCallback } from 'react';
 import { API_URL } from '../constants/api';
 import { AxiosError } from 'axios';
 import authClient from '../services/authClient';
-import { Appointment } from '../models';
 
 interface BookAppointmentWithCashParams {
-  dentist: string;
+  chiropractor: string;
   appointmentDate: string;
-  reason: string;
+  serviceId: string;
   amount?: number;
   onSuccess?: (message: string) => void;
   onError?: (message: string) => void;
@@ -19,9 +18,9 @@ const useBookAppointmentWithCash = () => {
 
   const sendRequest = useCallback(
     async ({
-      dentist,
+      chiropractor,
       appointmentDate,
-      reason,
+      serviceId,
       amount = 500,
       onSuccess,
       onError,
@@ -31,9 +30,9 @@ const useBookAppointmentWithCash = () => {
 
       try {
         const res = await authClient.post(`${API_URL}/appointments/book-cash`, {
-          dentist,
+          chiropractor,
           appointmentDate,
-          reason,
+          serviceId,
           amount,
         });
 

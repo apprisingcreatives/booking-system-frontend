@@ -4,3 +4,5 @@ export * from './dashboard';
 export * from './home';
 export * from './userProfile';
 export * from './payment';
+export * from './facility';
+export * from './invitation';

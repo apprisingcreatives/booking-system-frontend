@@ -1,8 +1,9 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useMemo, useState } from "react";
-import { useAuth } from "../../hooks";
-import { UserRole } from "../../models";
-import { CloseIcon, MenuIcon } from "./icons";
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useMemo, useState } from 'react';
+import { useAuth } from '../../hooks';
+import { UserRole } from '../../models';
+import { CloseIcon, MenuIcon } from './icons';
+import { useUserFacilities } from '../../hooks/useUserFacilities';
 
 interface HeaderProps {
   isAuthenticated: boolean;
@@ -19,20 +20,21 @@ const Header = ({
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { role } = user || {};
+  const { currentFacility } = useUserFacilities();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+  const { name } = currentFacility || {};
   const isDashboardView = useMemo(() => {
     return [
-      "/profile",
-      "/login",
-      "/signup",
-      "/booking",
-      "/dashboard",
-      "/admin",
+      '/profile',
+      '/login',
+      '/signup',
+      '/booking',
+      '/dashboard',
+      '/admin',
     ].some((path) => pathname.includes(path));
   }, [pathname]);
 
-  const handleLoginClick = () => navigate("/login");
+  const handleLoginClick = () => navigate('/login');
   const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
   const handleAboutUsClick = () => {
     onAboutUsClick();
@@ -44,7 +46,7 @@ const Header = ({
     toggleMobileMenu();
   };
   const commonLinkStyle =
-    "hover:text-blue-600 text-gray-800 transition cursor-pointer";
+    'hover:text-blue-600 text-gray-800 transition cursor-pointer';
 
   const renderGuestLinks = () => (
     <>
@@ -58,16 +60,16 @@ const Header = ({
   );
 
   const renderAuthLinks = () => (
-    <div className="flex md:flex-row flex-col items-end gap-x-6">
-      <Link to="/dashboard" className={commonLinkStyle}>
+    <div className='flex md:flex-row flex-col items-end gap-x-6'>
+      <Link to='/dashboard' className={commonLinkStyle}>
         Dashboard
       </Link>
-      {!pathname.includes("booking") && role === UserRole.Patient && (
-        <Link to="/booking" className={commonLinkStyle}>
+      {!pathname.includes('booking') && role === UserRole.Patient && (
+        <Link to='/booking' className={commonLinkStyle}>
           Book appointment
         </Link>
       )}
-      <Link to="/profile/update-profile" className={commonLinkStyle}>
+      <Link to='/profile/update-profile' className={commonLinkStyle}>
         Profile
       </Link>
       <button className={commonLinkStyle} onClick={logout}>
@@ -86,16 +88,16 @@ const Header = ({
     );
 
   return (
-    <header className="bg-gray-100 shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <Link to="/" className="text-2xl font-bold text-blue-600">
-          SmileCare
+    <header className='bg-gray-100 shadow-md sticky top-0 z-50'>
+      <div className='max-w-7xl mx-auto px-6 py-4 flex items-center justify-between'>
+        <Link to='/' className='text-2xl font-bold text-blue-600'>
+          {name || 'Apprising Creations'}
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex gap-x-6 font-medium">
+        <nav className='hidden md:flex gap-x-6 font-medium'>
           {isDashboardView ? (
-            <Link to="/" className={commonLinkStyle}>
+            <Link to='/' className={commonLinkStyle}>
               Home
             </Link>
           ) : (
@@ -106,7 +108,7 @@ const Header = ({
 
         {/* Mobile Hamburger Icon */}
         <button
-          className="md:hidden focus:outline-none"
+          className='md:hidden focus:outline-none'
           onClick={toggleMobileMenu}
         >
           {isMobileMenuOpen ? <CloseIcon size={24} /> : <MenuIcon size={24} />}
@@ -115,13 +117,13 @@ const Header = ({
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden px-6 pb-4 font-medium text-right">
+        <div className='md:hidden px-6 pb-4 font-medium text-right'>
           {isDashboardView ? (
-            <Link to="/" className={commonLinkStyle} onClick={toggleMobileMenu}>
+            <Link to='/' className={commonLinkStyle} onClick={toggleMobileMenu}>
               Home
             </Link>
           ) : (
-            <div className="flex md:flex-row flex-col justify-center items-end">
+            <div className='flex md:flex-row flex-col justify-center items-end'>
               <button className={commonLinkStyle} onClick={handleAboutUsClick}>
                 About us
               </button>
@@ -130,7 +132,7 @@ const Header = ({
               </button>
             </div>
           )}
-          <div className="flex flex-col space-y-2">{renderRightNav()}</div>
+          <div className='flex flex-col space-y-2'>{renderRightNav()}</div>
         </div>
       )}
     </header>

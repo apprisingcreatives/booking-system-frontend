@@ -1,12 +1,10 @@
-import { Form, useFormikContext } from "formik";
-import {
-  Button,
-  ErrorTypography,
-  InputLabel,
-  TimeSelectInput,
-} from "../common";
-import { useMemo } from "react";
-import { DentistAppointment } from "../../hooks/useGetDentistAppointments";
+import { Form, useFormikContext } from 'formik';
+import { ErrorTypography } from '../common';
+import { useMemo } from 'react';
+import { DentistAppointment } from '../../hooks/useGetDentistAppointments';
+import InputLabel from '../common/input/InputLabel';
+import TimeSelectInput from '../common/input/TimeSelectInput';
+import Button from '../common/Button';
 
 const RescheduleFormInner = ({
   onCancelReschedule,
@@ -32,7 +30,7 @@ const RescheduleFormInner = ({
       appointmentDates
         ?.filter((appt) => {
           const apptDate = new Date(appt.appointmentDate);
-          const datePart = apptDate.toISOString().split("T")[0];
+          const datePart = apptDate.toISOString().split('T')[0];
           return datePart === values.appointmentDate;
         })
         .map((appt) => {
@@ -43,30 +41,30 @@ const RescheduleFormInner = ({
   }, [appointmentDates, values.appointmentDate]);
 
   return (
-    <Form className="space-y-4">
+    <Form className='space-y-4'>
       {errorMessage && <ErrorTypography>{errorMessage}</ErrorTypography>}
-      <div className="flex md:flex-row flex-col justify-between gap-4">
+      <div className='flex md:flex-row flex-col justify-between gap-4'>
         <InputLabel
-          id="appointmentDate"
-          label="Select Date"
-          name="appointmentDate"
-          type="date"
-          className="flex-1"
+          id='appointmentDate'
+          label='Select Date'
+          name='appointmentDate'
+          type='date'
+          className='flex-1'
           minDateToday
         />
         <TimeSelectInput
-          name="time"
-          label="Select Time"
-          id="time"
+          name='time'
+          label='Select Time'
+          id='time'
           bookedTimes={bookedTimesForDate}
-          className="flex-1"
+          className='flex-1'
         />
       </div>
-      <div className="flex md:flex-row flex-col gap-2 justify-end">
-        <Button variant="primary" type="submit" loading={loading}>
+      <div className='flex md:flex-row flex-col gap-2 justify-end'>
+        <Button variant='primary' type='submit' loading={loading}>
           Reschedule
         </Button>
-        <Button variant="secondary" onClick={onCancelReschedule}>
+        <Button variant='secondary' onClick={onCancelReschedule}>
           Cancel
         </Button>
       </div>

@@ -1,6 +1,7 @@
-import { User } from "../../models";
-import { Modal, ModalContent } from "../common";
-import EditUserForm from "./EditUserForm";
+import { User } from '../../models';
+import { Modal } from '../common';
+import ModalContent from '../common/modal/ModalContent';
+import EditUserForm from './EditUserForm';
 
 type Props = {
   open: boolean;
@@ -12,7 +13,7 @@ type Props = {
 const EditUserModal = ({ open, handleClose, user, refetchUsers }: Props) => {
   if (!user) return null;
   return (
-    <Modal title="Edit User" open={open} toggle={handleClose}>
+    <Modal title='Edit User' isOpen={open} onClose={handleClose}>
       <ModalContent>
         <EditUserForm
           user={user}

@@ -1,23 +1,27 @@
 import { Form, Formik } from 'formik';
-import { Button, ErrorTypography } from '../common';
+import { ErrorTypography } from '../common';
 import { PaymentModal } from '../payment';
 import { bookingsSchema, formikInitialValues } from './constants';
 import {
-  useGetDentistUsers,
   usePostBookAppointment,
   useBookAppointmentWithCash,
   useSnackbar,
+  useAuth,
+  useGetFacilityChiropractors,
 } from '../../hooks';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SnackbarType } from '../../constants/snackbar';
-import { PaymentMethod } from '../../models';
+import { PaymentMethod } from '../../models/payment';
 import InputFields from './InputFields';
+import Button from '../common/Button';
 
 const BOOKING_FEE = 500; // Default booking fee in PHP
 
 const BookingFormWithPaymentOptions = () => {
-  const { sendRequest, dentists } = useGetDentistUsers();
+  const { user } = useAuth();
+  const { facilityId } = user || {};
+  const { sendRequest, chiropractors } = useGetFacilityChiropractors();
   const {
     sendRequest: sendRequestBookAppointment,
     loading: loadingBookAppointment,
@@ -33,10 +37,10 @@ const BookingFormWithPaymentOptions = () => {
   const navigate = useNavigate();
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [appointmentData, setAppointmentData] = useState<{
-    dentistId: string;
+    chiropractorId: string;
     appointmentDate: Date | string;
     time: string;
-    reason: string;
+    serviceId: string;
   } | null>(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<PaymentMethod | null>(null);
@@ -51,10 +55,10 @@ const BookingFormWithPaymentOptions = () => {
   };
 
   const onSubmit = (values: {
-    dentistId: string;
+    chiropractorId: string;
     appointmentDate: Date | string;
     time: string;
-    reason: string;
+    serviceId: string;
   }) => {
     // Store appointment data
     setAppointmentData(values);
@@ -80,12 +84,12 @@ const BookingFormWithPaymentOptions = () => {
 
     try {
       await sendRequestBookWithCash({
-        dentist: appointmentData.dentistId,
+        chiropractor: appointmentData.chiropractorId,
         appointmentDate:
           appointmentData.appointmentDate instanceof Date
             ? appointmentData.appointmentDate.toISOString()
             : appointmentData.appointmentDate,
-        reason: appointmentData.reason,
+        serviceId: appointmentData.serviceId,
         amount: BOOKING_FEE,
         onSuccess,
         onError,
@@ -123,9 +127,9 @@ const BookingFormWithPaymentOptions = () => {
   };
 
   useEffect(() => {
-    sendRequest();
+    sendRequest(`${facilityId}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [facilityId]);
 
   const isLoading = loadingBookAppointment || loadingBookWithCash;
   const errorMessage = errorMessageBookAppointment || errorMessageBookWithCash;
@@ -139,21 +143,27 @@ const BookingFormWithPaymentOptions = () => {
       >
         <Form className='space-y-4'>
           {errorMessage && <ErrorTypography>{errorMessage}</ErrorTypography>}
-          <InputFields dentists={dentists || []} />
+          <InputFields dentists={chiropractors || []} />
 
           {/* Booking Fee Display */}
-          <div className='bg-blue-50 border border-blue-200 rounded-lg p-4'>
+          <div className='bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-6 shadow-sm'>
             <div className='flex justify-between items-center'>
-              <div>
-                <h4 className='font-medium text-blue-900'>Booking Fee</h4>
-                <p className='text-sm text-blue-700'>
-                  Required to confirm your appointment
-                </p>
+              <div className='flex items-center space-x-3'>
+                <div className='w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center'>
+                  <span className='text-white text-lg'>💰</span>
+                </div>
+                <div>
+                  <h4 className='font-semibold text-gray-900'>Booking Fee</h4>
+                  <p className='text-sm text-gray-600'>
+                    Required to confirm your appointment
+                  </p>
+                </div>
               </div>
               <div className='text-right'>
-                <p className='text-lg font-semibold text-blue-900'>
+                <p className='text-2xl font-bold text-gray-900'>
                   ₱{BOOKING_FEE.toFixed(2)}
                 </p>
+                <p className='text-xs text-gray-500'>One-time payment</p>
               </div>
             </div>
           </div>
@@ -169,7 +179,7 @@ const BookingFormWithPaymentOptions = () => {
       <PaymentModal
         open={showPaymentModal}
         onClose={handlePaymentCancel}
-        appointmentId={appointmentData?.dentistId || ''}
+        appointmentId={appointmentData?.chiropractorId || ''}
         amount={BOOKING_FEE}
         onSuccess={handlePaymentSuccess}
         onPaymentMethodSelect={handlePaymentMethodSelect}

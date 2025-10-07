@@ -1,7 +1,7 @@
-import Sidebar from "./Sidebar";
-import { UpdatePasswordForm, UpdateProfileInfoForm } from ".";
-import CreateDentistProfile from "./CreateDentistProfile";
-import { useNavigate, useParams } from "react-router-dom";
+import Sidebar from './Sidebar';
+import { UpdatePasswordForm, UpdateProfileInfoForm } from '.';
+
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Profile = () => {
   const { view } = useParams();
@@ -12,23 +12,20 @@ const Profile = () => {
   };
 
   const renderContent = () => {
-    if (view === "update-profile") {
+    if (view === 'update-profile') {
       return <UpdateProfileInfoForm />;
     }
-    if (view === "update-password") {
+    if (view === 'update-password') {
       return <UpdatePasswordForm />;
-    }
-    if (view === "dentist-profile") {
-      return <CreateDentistProfile />;
     }
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50 overflow-hidden">
-      <Sidebar currentView={view || "profile"} onChangeView={onChangeView} />
+    <div className='flex min-h-screen bg-gray-50 overflow-hidden'>
+      <Sidebar currentView={view || 'profile'} onChangeView={onChangeView} />
 
-      <main className="flex-1 p-6 flex justify-center items-start">
-        <div className="w-full max-w-md">{renderContent()}</div>
+      <main className='flex-1 p-6 flex justify-center items-start'>
+        <div className='w-full max-w-md'>{renderContent()}</div>
       </main>
     </div>
   );

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Modal, Button, ErrorTypography } from '../common';
-import { PaymentMethod, PaymentMethodOption } from '../../models';
+import { Modal, ErrorTypography } from '../common';
+import { PaymentMethod, PaymentMethodOption } from '../../models/payment';
 import { usePayment, usePaymentMethods } from '../../hooks';
 import { SnackbarType } from '../../constants/snackbar';
 import { useSnackbar } from '../../hooks';
+import Button from '../common/Button';
 
 interface PaymentModalProps {
   open: boolean;
@@ -71,6 +72,7 @@ const PaymentModal = ({
       onSuccess();
       onClose();
     } catch (error) {
+      console.log(error);
       // Error is handled by the hook
     }
   };
@@ -100,7 +102,7 @@ const PaymentModal = ({
   };
 
   return (
-    <Modal open={open} toggle={onClose} title='Payment' maxSize='lg'>
+    <Modal isOpen={open} onClose={onClose} title='Payment' size='lg'>
       <div className='space-y-6'>
         <div className='text-center'>
           <h3 className='text-lg font-semibold text-gray-900'>

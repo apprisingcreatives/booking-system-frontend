@@ -5,8 +5,8 @@ import {
   PropsWithChildren,
   useCallback,
   useReducer,
-} from "react";
-import { API_URL } from "../constants/api";
+} from 'react';
+import { API_URL } from '../constants/api';
 
 import {
   SET_AUTH_ERROR,
@@ -18,17 +18,17 @@ import {
   SET_SIGNUP_LOADING,
   SET_USER,
   SET_USER_ROLE,
-} from "./auth/constants";
-import { initialState } from "./auth/initialState";
-import { clearTokens, setTokens } from "../services/localStorage";
-import guestClient from "../services/guestClient";
-import authClient from "../services/authClient";
-import { reducer } from "./auth/reducer";
+} from './auth/constants';
+import { initialState } from './auth/initialState';
+import { clearTokens, setTokens } from '../services/localStorage';
+import guestClient from '../services/guestClient';
+import authClient from '../services/authClient';
+import { reducer } from './auth/reducer';
 import {
   ApiErrorResponse,
   ApiMessageResponse,
-} from "../models/common/apiResponse";
-import { User, UserRole } from "../models";
+} from '../models/common/apiResponse';
+import { User, UserRole } from '../models';
 
 export const Context = createContext(initialState);
 
@@ -40,8 +40,8 @@ export const Provider: FC<PropsWithChildren<ProviderProps>> = ({
 }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const handleSetUser = (user: User) => {
-    dispatch({ type: SET_USER, payload: { user } });
+  const handleSetUser = (user: User | null) => {
+    dispatch({ type: SET_USER, payload: { user: user as User } });
   };
 
   const setLoadingUser = (loading: boolean) => {
@@ -74,7 +74,7 @@ export const Provider: FC<PropsWithChildren<ProviderProps>> = ({
   const getUser = useCallback(async () => {
     setLoadingUser(true);
     try {
-      const res = await authClient.get("/users/me");
+      const res = await authClient.get('/users/me');
       const { status, data } = res || {};
 
       if (status === 200) {
@@ -87,7 +87,7 @@ export const Provider: FC<PropsWithChildren<ProviderProps>> = ({
       }
       setLoadingUser(false);
     } catch (error) {
-      console.error("Unable to get user.", error);
+      console.error('Unable to get user.', error);
       setLoadingUser(false);
       const err = error as ApiErrorResponse;
       loginError({ errorMessage: err.data.message });
@@ -111,7 +111,7 @@ export const Provider: FC<PropsWithChildren<ProviderProps>> = ({
 
       if (res && res.status === 200) {
         dispatch({ type: SET_LOGIN });
-        onSuccess("Logged in successfully!");
+        onSuccess('Logged in successfully!');
         setTokens({
           access_token: res.data.accessToken,
         });
@@ -165,6 +165,7 @@ export const Provider: FC<PropsWithChildren<ProviderProps>> = ({
         clearTokens();
         dispatch({ type: SET_LOGOUT });
         handleSetIsAuthenticated({ isAuthenticated: false });
+        handleSetUser(null);
       }
     } catch (error) {
       const err = error as ApiErrorResponse;

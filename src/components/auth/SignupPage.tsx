@@ -1,14 +1,15 @@
-import { Formik, Form } from "formik";
-import { Button, InputLabel } from "../common";
+import { Formik, Form } from 'formik';
+import InputLabel from '../common/input/InputLabel';
 import {
   signupInitialValues,
   signupInputFields,
   signupValidation,
-} from "./constants";
-import { useAuth, useSnackbar } from "../../hooks";
-import { SnackbarType } from "../../constants/snackbar";
-import { useNavigate } from "react-router-dom";
-import { RenderInputFields } from "./types";
+} from './constants';
+import { useAuth, useSnackbar } from '../../hooks';
+import { SnackbarType } from '../../constants/snackbar';
+import { useNavigate } from 'react-router-dom';
+import { RenderInputFields } from './types';
+import Button from '../common/Button';
 
 const SignUpPage = () => {
   const { signup, signupLoading } = useAuth();
@@ -17,7 +18,7 @@ const SignUpPage = () => {
 
   const onSuccess = (message: string) => {
     snackbar(message, SnackbarType.SUCCESS, true);
-    navigate("/login", { replace: true });
+    navigate('/login', { replace: true });
   };
 
   const onError = (message: string) => {
@@ -40,20 +41,20 @@ const SignUpPage = () => {
   };
 
   return (
-    <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-md">
-      <h1 className="text-2xl font-bold mb-6 text-center">Create an Account</h1>
+    <div className='w-full max-w-md bg-white p-8 rounded-xl shadow-md'>
+      <h1 className='text-2xl font-bold mb-6 text-center'>Create an Account</h1>
       <Formik
         initialValues={signupInitialValues}
         validationSchema={signupValidation}
         onSubmit={onSubmit}
       >
-        <Form className="space-y-4">
+        <Form className='space-y-4'>
           {signupInputFields.map((field) => renderInputFields(field))}
-          <div className="flex w-full">
+          <div className='flex w-full'>
             <Button
-              variant="primary"
-              type="submit"
-              className="flex-1"
+              variant='primary'
+              type='submit'
+              className='flex-1'
               loading={signupLoading}
             >
               Sign up
@@ -61,9 +62,9 @@ const SignUpPage = () => {
           </div>
         </Form>
       </Formik>
-      <p className="mt-4 text-center text-sm">
+      <p className='mt-4 text-center text-sm'>
         Already have an account?
-        <a href="/login" className="text-blue-600 hover:underline">
+        <a href='/login' className='text-blue-600 hover:underline'>
           Log in
         </a>
       </p>
