@@ -84,6 +84,32 @@ const UserInvitationModal: React.FC<UserInvitationModalProps> = ({
     onClose();
   };
 
+  const renderRolePermissions = () => {
+    if (formData.role === UserRole.ClientAdmin) {
+      return (
+        <ul className='list-disc list-inside space-y-1'>
+          <li>Manage facility users and settings</li>
+          <li>View and manage all appointments</li>
+          <li>Send user invitations</li>
+          <li>Access all facility features</li>
+        </ul>
+      );
+    } else if (formData.role === UserRole.ClientUser) {
+      return (
+        <ul className='list-disc list-inside space-y-1'>
+          <li>Manage patient appointments</li>
+          <li>View patient information</li>
+          <li>Basic facility access</li>
+        </ul>
+      );
+    }
+    return (
+      <ul className='list-disc list-inside space-y-1'>
+        <li>Manage chiropractor appointments</li>
+        <li>View patient information</li>
+      </ul>
+    );
+  };
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title='Invite User' size='md'>
       <form onSubmit={handleSubmit} className='space-y-6'>
@@ -124,20 +150,7 @@ const UserInvitationModal: React.FC<UserInvitationModalProps> = ({
                 Role Permissions
               </h3>
               <div className='mt-2 text-sm text-blue-700'>
-                {formData.role === UserRole.ClientAdmin ? (
-                  <ul className='list-disc list-inside space-y-1'>
-                    <li>Manage facility users and settings</li>
-                    <li>View and manage all appointments</li>
-                    <li>Send user invitations</li>
-                    <li>Access all facility features</li>
-                  </ul>
-                ) : (
-                  <ul className='list-disc list-inside space-y-1'>
-                    <li>Manage patient appointments</li>
-                    <li>View patient information</li>
-                    <li>Basic facility access</li>
-                  </ul>
-                )}
+                {renderRolePermissions()}
               </div>
             </div>
           </div>

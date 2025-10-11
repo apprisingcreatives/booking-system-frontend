@@ -1,4 +1,4 @@
-import BookingFormWithPaymentOptions from './BookingFormWithPaymentOptions';
+import BookingForm from './BookingForm';
 
 const Booking = () => {
   return (
@@ -20,7 +20,7 @@ const Booking = () => {
             </h2>
           </div>
           <div className='p-8'>
-            <BookingFormWithPaymentOptions />
+            <BookingForm />
           </div>
         </div>
       </div>

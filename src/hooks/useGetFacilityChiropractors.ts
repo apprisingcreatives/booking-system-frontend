@@ -19,7 +19,7 @@ const useGetFacilityChiropractors = () => {
       );
 
       if (res && res.status === 200) {
-        setChiropractors(res.data.chiropractors);
+        setChiropractors(res.data.data.chiropractors);
       }
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;

@@ -30,7 +30,7 @@ import {
 import { initialState } from './userFacilities/initialState';
 import { reducer } from './userFacilities/reducer';
 import { UserFacilitiesState, FacilityData } from './userFacilities/types';
-import { Service } from '../models';
+import { Service, UserRole } from '../models';
 import { Appointment } from '../models/appointments';
 import { useAuth, useGetAllUsers, useGetFacility } from '../hooks';
 
@@ -46,7 +46,7 @@ export const UserFacilitiesProvider: FC<PropsWithChildren<ProviderProps>> = ({
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const { user } = useAuth();
-  const { facilityId } = user || {};
+  const { facilityId, role } = user || {};
 
   // Initialize hooks
   const { patients, sendRequest: sendRequestFacilityPatients } =
@@ -100,7 +100,7 @@ export const UserFacilitiesProvider: FC<PropsWithChildren<ProviderProps>> = ({
         sendRequestFacilityPatients(facilityId),
         sendRequestFacilityChiropractors(facilityId),
         sendRequestFacilityAppointments(facilityId),
-        sendRequestFacilityUsers(facilityId),
+        role === UserRole.ClientAdmin && sendRequestFacilityUsers(facilityId),
         fetchFacility(facilityId),
       ]);
     } catch (error) {

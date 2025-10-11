@@ -9,6 +9,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   fullWidth?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  type?: 'button' | 'submit' | 'reset';
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -21,6 +22,7 @@ const Button: React.FC<ButtonProps> = ({
   rightIcon,
   disabled,
   className,
+  type = 'button',
   ...props
 }) => {
   const baseClasses =
@@ -44,9 +46,10 @@ const Button: React.FC<ButtonProps> = ({
     md: 'px-4 py-2 text-sm',
     lg: 'px-6 py-3 text-base',
   };
-
+  console.log(`@@@@@@@@type`, type);
   return (
     <button
+      type={type}
       {...props}
       disabled={disabled || loading}
       className={clsx(

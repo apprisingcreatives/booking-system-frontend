@@ -3,6 +3,7 @@ export enum UserRole {
   ClientAdmin = 'client_admin',
   ClientUser = 'client_user',
   SuperAdmin = 'super_admin',
+  Chiropractor = 'chiropractor',
 }
 
 export enum UserStatus {
@@ -79,7 +80,7 @@ export interface Invitation {
   _id: string;
   email: string;
   role: UserRole;
-  facilityId: string;
+  facilityId: { name: string; _id: string };
   invitedBy: string;
   token: string;
   status: 'pending' | 'accepted' | 'expired' | 'cancelled';

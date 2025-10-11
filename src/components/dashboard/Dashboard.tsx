@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const { facilityId } = user || {};
+  const { facilityId, role } = user || {};
   const [cancelModal, setCancelModal] = useState({ open: false, id: '' });
   const [rescheduleModal, setRescheduleModal] = useState<{
     open: boolean;
@@ -67,7 +67,9 @@ const Dashboard = () => {
     if (facilityUser) {
       fetchFacilityAppointments(facilityId as string);
       return;
-    } else fetchAppointments(user._id);
+    } else {
+      fetchAppointments(user._id);
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, facilityUser]);
@@ -130,11 +132,13 @@ const Dashboard = () => {
               appointment to get started!
             </p>
           )}
-          <Button variant='primary' onClick={handleBookAppointment}>
-            {user?.role === UserRole.Patient
-              ? 'Book Appointment'
-              : 'Create New Appointment'}
-          </Button>
+          {role !== UserRole.Chiropractor && (
+            <Button variant='primary' onClick={handleBookAppointment}>
+              {user?.role === UserRole.Patient
+                ? 'Book Appointment'
+                : 'Create New Appointment'}
+            </Button>
+          )}
         </div>
       );
     }

@@ -33,3 +33,4 @@ export { default as useGetFacilityPatients } from './useGetFacilityPatients';
 export { default as useGetFacility } from './useGetFacility';
 export { default as useGetAllFacilities } from './useGetAllFacilities';
 export { default as useUpdateFacility } from './useUpdateFacility';
+export { default as usePostCreateChiropractor } from './usePostCreateChiropractor';

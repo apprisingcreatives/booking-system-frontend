@@ -1,68 +1,86 @@
-import { useMemo } from 'react';
-import { useFormikContext } from 'formik';
-import { services } from './constants';
-import SelectInput from '../common/input/SelectInput';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useMemo, useState } from 'react';
 import InputLabel from '../common/input/InputLabel';
-import TimeSelectInput from '../common/input/TimeSelectInput';
+import SelectInput from '../common/input/SelectInput';
+import { useFormikContext } from 'formik';
 import { useGetFacilityAppointments } from '../../hooks';
 
+import TimeSlotModal from './TimeSlotModal';
+import { useUserFacilities } from '../../hooks/useUserFacilities';
+
 type Props = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dentists: any[];
+  chiropractors: any[];
 };
 
-const InputFields = ({ dentists }: Props) => {
+const InputFields = ({ chiropractors }: Props) => {
+  const { services } = useUserFacilities();
+
   const { sendRequest, appointments } = useGetFacilityAppointments();
-  const { values } = useFormikContext<{
-    dentistId: string;
+  const { values, setFieldValue } = useFormikContext<{
+    chiropractorId: string;
     appointmentDate: string;
     time: string;
-    reason: string;
+    serviceId: string;
   }>();
-  const appointmentDates = useMemo(() => {
-    return appointments?.map((appointment) => appointment.appointmentDate);
-  }, [appointments]);
-  const options = useMemo(() => {
-    if (!Array.isArray(dentists)) return [];
-    return dentists.map((dentist) => ({
-      label: `Dr. ${dentist.name}`,
-      value: dentist._id,
+  const servicesOptions = useMemo(() => {
+    return services.map((service) => ({
+      label: service.name,
+      value: service._id,
     }));
-  }, [dentists]);
+  }, [services]);
+  const [isTimeModalOpen, setIsTimeModalOpen] = useState(false);
+
+  const appointmentDates = useMemo(
+    () => appointments?.map((appt) => appt.appointmentDate) || [],
+    [appointments]
+  );
 
   const bookedTimesForDate = useMemo(() => {
     if (!values.appointmentDate) return [];
-
     return (
       appointmentDates
-        ?.filter((appt) => {
+        .filter((appt) => {
           const apptDate = new Date(appt);
-          const datePart = apptDate.toISOString().split('T')[0];
-          return datePart === values.appointmentDate;
+          return (
+            apptDate.toISOString().split('T')[0] === values.appointmentDate
+          );
         })
         .map((appt) => {
-          const apptDate = new Date(appt);
-          return apptDate.toTimeString().slice(0, 5);
+          const date = new Date(appt);
+          return date.toTimeString().slice(0, 5);
         }) || []
     );
   }, [appointmentDates, values.appointmentDate]);
 
-  const onDentistChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const dentistId = e.target.value;
-    if (dentistId) {
-      sendRequest(dentistId);
+  const options = chiropractors.map((chiro) => ({
+    label: `Dr. ${chiro.name}`,
+    value: chiro._id,
+  }));
+
+  const handleSelectTime = (time: string) => {
+    setFieldValue('time', time);
+    setIsTimeModalOpen(false);
+  };
+
+  const handleChiropractorChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const chiropractorId = e.target.value;
+    if (chiropractorId) {
+      sendRequest(chiropractorId);
     }
   };
 
   return (
     <>
       <SelectInput
-        label='Select Dentist'
+        label='Select Chiropractor'
         options={options}
-        name='dentistId'
-        onChange={onDentistChange}
+        name='chiropractorId'
+        onChange={handleChiropractorChange}
       />
-      <SelectInput label='Reason' options={services} name='reason' />
+      <SelectInput label='Service' options={servicesOptions} name='serviceId' />
+
       <div className='flex justify-between gap-4'>
         <InputLabel
           id='appointmentDate'
@@ -72,14 +90,25 @@ const InputFields = ({ dentists }: Props) => {
           className='flex-1'
           minDateToday
         />
-        <TimeSelectInput
-          name='time'
-          label='Select Time'
-          id='time'
-          bookedTimes={bookedTimesForDate}
-          className='flex-1'
-        />
+        <div className='flex flex-col gap-y-1 flex-1'>
+          <label className='block font-medium text-gray-700'>Select Time</label>
+          <button
+            type='button'
+            onClick={() => setIsTimeModalOpen(true)}
+            className='p-2 border rounded w-full text-left bg-white hover:bg-gray-50 transition'
+            disabled={!values.appointmentDate}
+          >
+            {values.time ? values.time : 'Choose Time'}
+          </button>
+        </div>
       </div>
+
+      <TimeSlotModal
+        isOpen={isTimeModalOpen}
+        onClose={() => setIsTimeModalOpen(false)}
+        bookedTimes={bookedTimesForDate}
+        onSelect={handleSelectTime}
+      />
     </>
   );
 };

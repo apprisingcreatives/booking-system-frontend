@@ -7,5 +7,6 @@ export const getRoleOptions = (role: UserRole) => {
   return [
     { value: UserRole.ClientUser, label: 'Client User' },
     { value: UserRole.ClientAdmin, label: 'Client Administrator' },
+    { value: UserRole.Chiropractor, label: 'Chiropractor' },
   ];
 };

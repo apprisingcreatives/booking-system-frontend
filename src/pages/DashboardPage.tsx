@@ -12,7 +12,11 @@ const DashboardPage = () => {
     return <Navigate to='/' replace />;
   }
 
-  if (role === UserRole.Patient)
+  if (
+    role === UserRole.Patient ||
+    role === UserRole.ClientUser ||
+    role === UserRole.Chiropractor
+  )
     return (
       <div className='min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 px-4 py-8'>
         <div className='max-w-7xl mx-auto'>
