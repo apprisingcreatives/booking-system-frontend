@@ -1,37 +1,43 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { AxiosError } from 'axios';
 import authClient from '../services/authClient';
 import { API_URL } from '../constants/api';
 import { User } from '../models/user';
+import { Appointment } from '../models';
 
-interface PatientWithStats extends User {
-  appointmentCount?: number;
-  lastAppointment?: {
-    date: Date | string;
-    status: string;
-  } | null;
+interface PatientDetails {
+  patient: User;
+  statistics: {
+    totalAppointments: number;
+    completedAppointments: number;
+    cancelledAppointments: number;
+    upcomingAppointments: number;
+  };
+  appointments: Appointment[];
 }
 
-const useGetFacilityPatients = () => {
+const useGetPatientDetails = () => {
   const [loading, setLoading] = useState(false);
-  const [patients, setPatients] = useState<PatientWithStats[]>([]);
+  const [patientDetails, setPatientDetails] = useState<PatientDetails | null>(
+    null
+  );
   const [errorMessage, setErrorMessage] = useState('');
 
-  const sendRequest = useCallback(async (facilityId: string) => {
-    if (!facilityId) return;
+  const sendRequest = async (facilityId: string, patientId: string) => {
+    if (!facilityId || !patientId) return;
 
     setLoading(true);
     setErrorMessage('');
 
     try {
       const res = await authClient.get(
-        `${API_URL}/facilities/${facilityId}/patients`
+        `${API_URL}/facilities/${facilityId}/patients/${patientId}`
       );
 
       if (res && res.status === 200) {
-        setPatients(res.data.patients || []);
+        setPatientDetails(res.data.data);
       } else {
-        const message = res.data?.message || 'Failed to fetch patients';
+        const message = res.data?.message || 'Failed to fetch patient details';
         setErrorMessage(message);
       }
     } catch (err) {
@@ -42,14 +48,14 @@ const useGetFacilityPatients = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   return {
-    patients,
+    patientDetails,
     loading,
     errorMessage,
     sendRequest,
   };
 };
 
-export default useGetFacilityPatients;
+export default useGetPatientDetails;

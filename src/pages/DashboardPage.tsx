@@ -1,8 +1,8 @@
 import { AdminDashboard } from '../components';
-import TabbedDashboard from '../components/dashboard/TabbedDashboard';
 import { useAuth } from '../hooks';
 import { UserRole } from '../models';
 import { Navigate } from 'react-router-dom';
+import AppointmentsPage from './AppointmentsPage';
 
 const DashboardPage = () => {
   const { user } = useAuth();
@@ -13,25 +13,12 @@ const DashboardPage = () => {
   }
 
   if (
+    role === UserRole.Chiropractor ||
     role === UserRole.Patient ||
-    role === UserRole.ClientUser ||
-    role === UserRole.Chiropractor
-  )
-    return (
-      <div className='min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 px-4 py-8'>
-        <div className='max-w-7xl mx-auto'>
-          <div className='mb-8'>
-            <h1 className='text-4xl font-bold text-gray-900 mb-2'>
-              Welcome back, {user?.fullName || 'User'}!
-            </h1>
-            <p className='text-lg text-gray-600'>
-              Manage your appointments and stay organized
-            </p>
-          </div>
-          <TabbedDashboard />
-        </div>
-      </div>
-    );
+    role === UserRole.ClientUser
+  ) {
+    return <AppointmentsPage />;
+  }
 
   return <AdminDashboard currentUser={user} />;
 };

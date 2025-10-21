@@ -103,7 +103,7 @@ const InvitationAcceptPage: React.FC = () => {
       },
     });
   };
-  console.log(`@@@@@@@@@@formData.specialization`, formData.specialization);
+
   const handleGoToLogin = () => navigate('/login');
 
   const getRoleDisplayName = (role: string) => {

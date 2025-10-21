@@ -16,7 +16,7 @@ const ServicesManagementPage: React.FC = () => {
     loadingServices,
     sendRequestFacilityServices: fetchServices,
   } = useUserFacilities();
-  console.log(`@@@@@@@@@@@services`, services);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => {

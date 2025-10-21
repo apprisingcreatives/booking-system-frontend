@@ -90,27 +90,32 @@ export const UserFacilitiesProvider: FC<PropsWithChildren<ProviderProps>> = ({
   }, []);
 
   // Load user facilities based on role
-  const loadFacilityData = useCallback(async (facilityId: string) => {
-    setLoading(true);
-    setError('');
+  const loadFacilityData = useCallback(
+    async (facilityId: string) => {
+      setLoading(true);
+      setError('');
 
-    try {
-      await Promise.all([
-        sendRequestFacilityServices(facilityId),
-        sendRequestFacilityPatients(facilityId),
-        sendRequestFacilityChiropractors(facilityId),
-        sendRequestFacilityAppointments(facilityId),
-        role === UserRole.ClientAdmin && sendRequestFacilityUsers(facilityId),
-        fetchFacility(facilityId),
-      ]);
-    } catch (error) {
-      console.error('Unable to load facility data.', error);
-      const err = error as ApiErrorResponse;
-      setError(err.data?.message || 'Failed to load facility data');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      try {
+        await Promise.all([
+          fetchFacility(facilityId),
+          sendRequestFacilityServices(facilityId),
+          (role === UserRole.ClientAdmin || role === UserRole.ClientUser) &&
+            sendRequestFacilityPatients(facilityId),
+          sendRequestFacilityChiropractors(facilityId),
+          (role === UserRole.ClientAdmin || role === UserRole.ClientUser) &&
+            sendRequestFacilityAppointments(facilityId),
+          role === UserRole.ClientAdmin && sendRequestFacilityUsers(facilityId),
+        ]);
+      } catch (error) {
+        console.error('Unable to load facility data.', error);
+        const err = error as ApiErrorResponse;
+        setError(err.data?.message || 'Failed to load facility data');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [role]
+  );
 
   const addService = useCallback((facilityId: string, service: Service) => {
     dispatch({
@@ -173,7 +178,6 @@ export const UserFacilitiesProvider: FC<PropsWithChildren<ProviderProps>> = ({
 
   useEffect(() => {
     if (facilityId) {
-      console.log(`fetching facility data`);
       loadFacilityData(facilityId as string);
     }
   }, [facilityId]);

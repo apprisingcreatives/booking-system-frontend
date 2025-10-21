@@ -19,6 +19,9 @@ const BookingsPage = lazy(() => import('../pages/BookingsPage'));
 const Dashboard = lazy(() => import('../pages/DashboardPage'));
 const UserProfilePage = lazy(() => import('../pages/UserProfilePage'));
 const AuthPage = lazy(() => import('../pages/AuthPages'));
+const PatientManagementPage = lazy(
+  () => import('../pages/PatientManagementPage')
+);
 
 const AppRoutes = () => {
   const { isAuthenticated, getUser } = useAuth();
@@ -133,7 +136,7 @@ const AppRoutes = () => {
               <ProtectedRoute
                 requiredRoles={[UserRole.ClientAdmin, UserRole.ClientUser]}
               >
-                <div>Patients Management - Coming Soon</div>
+                <PatientManagementPage />
               </ProtectedRoute>
             }
           />
@@ -172,27 +175,6 @@ const AppRoutes = () => {
             element={
               <ProtectedRoute requiredRoles={[UserRole.ClientAdmin]}>
                 <FacilityUserManagement />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path='/facilities/:facilityId/appointments'
-            element={
-              <ProtectedRoute
-                requiredRoles={[UserRole.ClientAdmin, UserRole.ClientUser]}
-              >
-                <div>Appointments Management - Coming Soon</div>
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Patient appointment routes */}
-          <Route
-            path='/patients/:patientId/appointments'
-            element={
-              <ProtectedRoute requiredRoles={[UserRole.Patient]}>
-                <div>My Appointments - Coming Soon</div>
               </ProtectedRoute>
             }
           />

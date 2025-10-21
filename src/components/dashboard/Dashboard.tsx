@@ -147,7 +147,7 @@ const Dashboard = () => {
       <ul className='space-y-4'>
         {list.map((appt) => (
           <AppointmentCard
-            key={appt.id}
+            key={appt._id}
             appointment={appt}
             onClickCancel={handleCancelClick}
             onClickReschedule={handleRescheduleClick}

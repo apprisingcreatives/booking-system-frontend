@@ -32,7 +32,7 @@ const Input: React.FC<InputProps> = ({
       <input
         {...props}
         className={clsx(
-          'block w-full rounded-md border-gray-300 shadow-sm border focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 focus:outline-blue-500 disabled:bg-gray-200 disabled:text-gray-600 disabled:border-0',
+          'block w-full rounded-md border-gray-300 shadow-sm border focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 focus:outline-blue-500 disabled:bg-gray-200 disabled:text-gray-600 disabled:border-0 placeholder:text-gray-500 placeholder:italic',
           {
             'border-red-300 focus:border-red-500 focus:ring-red-500': error,
           },

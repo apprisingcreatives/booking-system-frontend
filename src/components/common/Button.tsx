@@ -46,7 +46,7 @@ const Button: React.FC<ButtonProps> = ({
     md: 'px-4 py-2 text-sm',
     lg: 'px-6 py-3 text-base',
   };
-  console.log(`@@@@@@@@type`, type);
+
   return (
     <button
       type={type}

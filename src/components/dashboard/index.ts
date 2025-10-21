@@ -3,4 +3,4 @@ export { default as AdminDashboard } from './AdminDashboard';
 export { default as ManageUsers } from '../manageUsers/ManageUsers';
 export { default as FacilityUserManagement } from './FacilityUserManagement';
 export { default as ServiceModal } from './ServiceModal';
-export { default as TabbedDashboard } from './TabbedDashboard';
+export { default as AppointmentDetailsModal } from './AppointmentDetailsModal';

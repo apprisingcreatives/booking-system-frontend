@@ -1,6 +1,6 @@
 import { formatDateTime } from '../../utils/dateFormatter';
 import { useAuth } from '../../hooks';
-import { Appointment, UserRole } from '../../models';
+import { Appointment, User, UserRole } from '../../models';
 import Button from '../common/Button';
 
 type Props = {
@@ -21,11 +21,13 @@ const AppointmentCard = ({
   const {
     appointmentDate,
     patient,
-    chiropractor: chiropractorObject,
-    id: id,
+    chiropractorId: chiropractorObject,
+    _id: id,
   } = appointment || {};
 
-  const { name: chiropractor = '' } = chiropractorObject || {};
+  const { fullName: chiropractor = '' } =
+    (chiropractorObject as Partial<User>) || {};
+
   return (
     <li className='bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden'>
       <div className='p-6'>

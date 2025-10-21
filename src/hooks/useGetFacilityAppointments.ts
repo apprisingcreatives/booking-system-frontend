@@ -11,6 +11,7 @@ const useGetFacilityAppointments = () => {
 
   const sendRequest = useCallback(async (id: string) => {
     setLoading(true);
+
     try {
       const res = await authClient.get(
         `${API_URL}/appointments/facility/${id}`

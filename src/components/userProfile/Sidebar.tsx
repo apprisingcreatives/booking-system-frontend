@@ -18,15 +18,15 @@ const Sidebar = ({ currentView, onChangeView }: Props) => {
       { label: 'Change Password', view: 'update-password' },
     ];
 
-    if (role === UserRole.ClientUser) {
+    if (role === UserRole.Chiropractor) {
       baseItems.push({
-        label: 'Create dentist profile',
-        view: 'dentist-profile',
+        label: 'Create chiropractor profile',
+        view: 'chiropractor-profile',
       });
     }
-
     return baseItems;
   }, [role]);
+
   const getButtonClass = (view: string) =>
     `w-full text-left px-4 py-2 rounded-md transition cursor-pointer ${
       currentView === view

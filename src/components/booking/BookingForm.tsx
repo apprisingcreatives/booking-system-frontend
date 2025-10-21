@@ -19,7 +19,7 @@ const BookingForm = () => {
   const { user } = useAuth();
   const { facilityId } = user || {};
   const { sendRequest, chiropractors } = useGetFacilityChiropractors();
-  console.log(`booking`);
+
   const {
     sendRequest: sendRequestBookAppointment,
     loading: loadingBookAppointment,
@@ -44,7 +44,6 @@ const BookingForm = () => {
     time: string;
     serviceId: string;
   }) => {
-    console.log(`@@@@@@@@values`, values);
     // Directly send booking request (no payment modal)
     sendRequestBookAppointment({
       values,

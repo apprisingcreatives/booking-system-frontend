@@ -54,7 +54,7 @@ const InputFields = ({ chiropractors }: Props) => {
 
   const options = chiropractors.map((chiro) => ({
     label: `Dr. ${chiro.name}`,
-    value: chiro._id,
+    value: chiro.userId?._id,
   }));
 
   const handleSelectTime = (time: string) => {
@@ -66,6 +66,7 @@ const InputFields = ({ chiropractors }: Props) => {
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const chiropractorId = e.target.value;
+
     if (chiropractorId) {
       sendRequest(chiropractorId);
     }

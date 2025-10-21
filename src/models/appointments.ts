@@ -24,9 +24,9 @@ export enum PaymentMethod {
 }
 
 export interface Appointment {
-  id: string;
+  _id: string;
   patientId: string;
-  chiropractorId: string;
+  chiropractorId: string | Partial<Chiropractor>;
   serviceId: string;
   facilityId: string;
   appointmentDate: Date | string;
