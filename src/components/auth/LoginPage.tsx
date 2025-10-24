@@ -53,12 +53,6 @@ const LoginPage = () => {
           </div>
         </Form>
       </Formik>
-      <p className='mt-4 text-center text-sm'>
-        Don’t have an account?
-        <a href='/signup' className='text-blue-600 hover:underline'>
-          Sign up
-        </a>
-      </p>
     </div>
   );
 };

@@ -43,6 +43,7 @@ const BookingForm = () => {
     appointmentDate: Date | string;
     time: string;
     serviceId: string;
+    notes?: string;
   }) => {
     // Directly send booking request (no payment modal)
     sendRequestBookAppointment({

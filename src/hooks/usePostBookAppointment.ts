@@ -10,6 +10,7 @@ type SendRequestParams = {
     appointmentDate: Date | string;
     serviceId: string;
     time: string;
+    notes?: string;
   };
   onSuccess: (message: string) => void;
   onError: (message: string) => void;
@@ -27,7 +28,13 @@ const usePostBookAppointment = () => {
     onError,
   }: SendRequestParams) => {
     setLoading(true);
-    const { appointmentDate, time, chiropractorId, serviceId } = values;
+    const {
+      appointmentDate,
+      time,
+      chiropractorId,
+      serviceId,
+      notes = '',
+    } = values;
 
     const appointmentDateTime = combineDateTime(appointmentDate, time);
 
@@ -35,6 +42,7 @@ const usePostBookAppointment = () => {
       chiropractor: chiropractorId,
       appointmentDate: appointmentDateTime,
       serviceId,
+      notes,
     };
 
     try {

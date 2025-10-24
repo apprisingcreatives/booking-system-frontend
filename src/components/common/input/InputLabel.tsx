@@ -46,7 +46,7 @@ const InputLabel = ({
         placeholder={placeholder}
         disabled={disabled}
         min={minDate}
-        className='w-full p-2 border rounded disabled:bg-gray-200 disabled:text-gray-600 disabled:border-0'
+        className='w-full p-2 border rounded disabled:bg-gray-200 disabled:text-gray-600 disabled:border-0 outline-none focus:border-blue-500 focus:border-2'
       />
       {isPassword && (
         <label className='mt-1 text-sm flex items-center gap-2'>

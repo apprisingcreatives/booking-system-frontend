@@ -1,6 +1,6 @@
 import { User, UserRole } from '../../models';
 import SuperAdminDashboard from './SuperAdminDashboard';
-import ClientAdminDashboard from './ClientAdminDashboard';
+import ClientAdminDashboard from './clientAdminDashboard/ClientAdminDashboard';
 
 const AdminDashboard = ({ currentUser }: { currentUser: User }) => {
   if (!currentUser) return null;

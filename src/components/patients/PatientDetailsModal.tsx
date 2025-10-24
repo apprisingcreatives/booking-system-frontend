@@ -8,9 +8,15 @@ import {
   useSnackbar,
   useAuth,
 } from '../../hooks';
-import { format } from 'date-fns';
+
 import { SnackbarType } from '../../constants/snackbar';
 import { UserRole } from '../../models/user';
+import { getStatusColor } from './helpers';
+import { formatDate, formatDateTimeFns } from '../../utils/dateFormatter';
+import { canUpdatePatientStatus } from '../../utils/permissions';
+import Select from '../common/Select';
+import { patientStatusOptions } from './constants';
+import Button from '../common/Button';
 
 interface PatientDetailsModalProps {
   isOpen: boolean;
@@ -71,45 +77,6 @@ const PatientDetailsModal = ({
         snackbar(message, SnackbarType.ERROR, true, 5000);
       },
     });
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-100 text-green-800';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'inactive':
-        return 'bg-gray-100 text-gray-800';
-      case 'suspended':
-        return 'bg-red-100 text-red-800';
-      case 'confirmed':
-        return 'bg-blue-100 text-blue-800';
-      case 'completed':
-        return 'bg-green-100 text-green-800';
-      case 'cancelled':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const formatDate = (date: Date | string) => {
-    try {
-      const dateObj = typeof date === 'string' ? new Date(date) : date;
-      return format(dateObj, 'MMMM d, yyyy');
-    } catch {
-      return 'N/A';
-    }
-  };
-
-  const formatDateTime = (date: Date | string) => {
-    try {
-      const dateObj = typeof date === 'string' ? new Date(date) : date;
-      return format(dateObj, 'MMM d, yyyy h:mm a');
-    } catch {
-      return 'N/A';
-    }
   };
 
   if (!patient) return null;
@@ -196,36 +163,33 @@ const PatientDetailsModal = ({
           )}
 
           {/* Status Management - Only for ClientAdmin */}
-          {user?.role === UserRole.ClientAdmin && (
+          {canUpdatePatientStatus(user?.role as UserRole) && (
             <div className='bg-white border border-gray-200 rounded-lg p-4'>
               <h4 className='text-sm font-semibold text-gray-900 mb-3'>
                 Update Patient Status
               </h4>
               <div className='flex items-center space-x-4'>
-                <select
+                <Select
+                  options={patientStatusOptions}
                   value={selectedStatus}
                   onChange={(e) =>
                     setSelectedStatus(e.target.value as UserStatus)
                   }
-                  className='flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                   disabled={updatingStatus}
-                >
-                  <option value='active'>Active</option>
-                  <option value='pending'>Pending</option>
-                  <option value='inactive'>Inactive</option>
-                  <option value='suspended'>Suspended</option>
-                </select>
-                <button
+                  className='flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                />
+
+                <Button
                   onClick={handleStatusChange}
                   disabled={
                     updatingStatus ||
                     !selectedStatus ||
                     selectedStatus === patient.status
                   }
-                  className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors'
+                  className='w-full max-w-[150px]'
                 >
                   {updatingStatus ? 'Updating...' : 'Update Status'}
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -254,7 +218,7 @@ const PatientDetailsModal = ({
                               appointment.status.slice(1).replace('_', ' ')}
                           </span>
                           <span className='text-sm text-gray-500'>
-                            {formatDateTime(appointment.appointmentDate)}
+                            {formatDateTimeFns(appointment.appointmentDate)}
                           </span>
                         </div>
                         {appointment.chiropractorId && (

@@ -1,8 +1,10 @@
-import { useState } from 'react';
 import { Input, Modal } from '../common';
 import { useCreatePatient, useSnackbar } from '../../hooks';
 import { SnackbarType } from '../../constants/snackbar';
 import Button from '../common/Button';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import Select from '../common/Select';
 
 interface AddPatientModalProps {
   isOpen: boolean;
@@ -20,98 +22,55 @@ const AddPatientModal = ({
   const { snackbar } = useSnackbar();
   const { loading, sendRequest } = useCreatePatient();
 
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-  });
-
-  const [errors, setErrors] = useState<{
-    fullName?: string;
-    email?: string;
-    phone?: string;
-    password?: string;
-    confirmPassword?: string;
-  }>({});
-
-  const validateForm = () => {
-    const newErrors: typeof errors = {};
-
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = 'Full name is required';
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Invalid email format';
-    }
-
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
-    sendRequest({
-      facilityId,
-      fullName: formData.fullName,
-      email: formData.email,
-      phone: formData.phone || undefined,
-      password: formData.password,
-      onSuccess: (message) => {
-        snackbar(message, SnackbarType.SUCCESS, true, 3000);
-        onPatientAdded();
-        handleClose();
-      },
-      onError: (message) => {
-        snackbar(message, SnackbarType.ERROR, true, 5000);
-      },
-    });
-  };
-
-  const handleClose = () => {
-    setFormData({
+  const formik = useFormik({
+    initialValues: {
       fullName: '',
       email: '',
       phone: '',
-      password: '',
-      confirmPassword: '',
-    });
-    setErrors({});
+      dob: '',
+      gender: 'male',
+    },
+    validationSchema: Yup.object({
+      fullName: Yup.string().required('Full name is required'),
+      email: Yup.string()
+        .email('Invalid email format')
+        .required('Email is required'),
+      phone: Yup.string().required('Phone is required'),
+      dob: Yup.string().required('Date of birth is required'),
+      gender: Yup.string().required('Gender is required'),
+    }),
+    onSubmit: (values) => {
+      sendRequest({
+        facilityId,
+        fullName: values.fullName,
+        email: values.email,
+        phone: values.phone || undefined,
+        dob: values.dob,
+        gender: values.gender || 'male',
+        onSuccess: (message) => {
+          snackbar(message, SnackbarType.SUCCESS, true, 3000);
+          onPatientAdded();
+          handleClose();
+        },
+        onError: (message) => {
+          snackbar(message, SnackbarType.ERROR, true, 5000);
+        },
+      });
+    },
+  });
+
+  const handleClose = () => {
+    formik.resetForm();
     onClose();
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    // Clear error when user starts typing
-    if (errors[name as keyof typeof errors]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: undefined,
-      }));
-    }
+    formik.setFieldValue(name, value);
+  };
+
+  const handleSelectChange = (value: string) => {
+    formik.setFieldValue('gender', value);
   };
 
   return (
@@ -121,39 +80,21 @@ const AddPatientModal = ({
       title='Add New Patient'
       size='md'
     >
-      <form onSubmit={handleSubmit} className='space-y-4'>
+      <form onSubmit={formik.handleSubmit} className='space-y-4'>
         {/* Full Name */}
-        {/* <div> */}
-        {/* <label
-            htmlFor='fullName'
-            className='block text-sm font-medium text-gray-700 mb-1'
-          >
-            Full Name <span className='text-red-500'>*</span>
-          </label>
-          <input
-            type='text'
-            id='fullName'
-            name='fullName'
-            value={formData.fullName}
-            onChange={handleInputChange}
-            className={`w-full px-4 py-2 border ${
-              errors.fullName ? 'border-red-500' : 'border-gray-300'
-            } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none`}
-            placeholder='John Doe'
-            disabled={loading}
-          />
-          {errors.fullName && (
-            <p className='text-red-500 text-sm mt-1'>{errors.fullName}</p>
-          )}
-        </div> */}
+
         <Input
           label='Full Name'
           required
           id='fullName'
           name='fullName'
-          value={formData.fullName}
+          value={formik.values.fullName}
           onChange={handleInputChange}
-          error={errors.fullName}
+          error={
+            formik.touched.fullName && formik.errors.fullName
+              ? formik.errors.fullName
+              : ''
+          }
           disabled={loading}
           placeholder='John Doe'
         />
@@ -165,53 +106,65 @@ const AddPatientModal = ({
           id='email'
           name='email'
           type='email'
-          value={formData.email}
+          value={formik.values.email}
           onChange={handleInputChange}
-          error={errors.email}
+          error={
+            formik.touched.email && formik.errors.email
+              ? formik.errors.email
+              : ''
+          }
           disabled={loading}
           placeholder='john@example.com'
         />
 
         {/* Phone */}
         <Input
-          label='Phone (Optional)'
+          label='Phone'
           required
           id='phone'
           name='phone'
-          value={formData.phone}
+          value={formik.values.phone}
           onChange={handleInputChange}
-          error={errors.phone}
+          error={
+            formik.touched.phone && formik.errors.phone
+              ? formik.errors.phone
+              : ''
+          }
           disabled={loading}
           type='tel'
           placeholder='+1234567890'
         />
-
-        {/* Password */}
         <Input
-          label='Password'
+          label='Date of Birth'
           required
-          id='password'
-          name='password'
-          value={formData.password}
+          id='dob'
+          name='dob'
+          value={formik.values.dob}
           onChange={handleInputChange}
-          error={errors.password}
+          error={
+            formik.touched.dob && formik.errors.dob ? formik.errors.dob : ''
+          }
           disabled={loading}
-          type='password'
-          placeholder='••••••••'
+          type='date'
+          placeholder='+1234567890'
         />
-
-        {/* Confirm Password */}
-        <Input
-          label='Confirm Password'
+        <Select
+          label='Gender'
           required
-          id='confirmPassword'
-          name='confirmPassword'
-          value={formData.confirmPassword}
-          onChange={handleInputChange}
-          error={errors.confirmPassword}
+          id='gender'
+          name='gender'
+          value={formik.values.gender}
+          onChange={(e) => handleSelectChange(e.target.value)}
+          error={
+            formik.touched.gender && formik.errors.gender
+              ? formik.errors.gender
+              : ''
+          }
           disabled={loading}
-          type='password'
-          placeholder='••••••••'
+          options={[
+            { label: 'Male', value: 'male' },
+            { label: 'Female', value: 'female' },
+          ]}
         />
 
         {/* Form Actions */}

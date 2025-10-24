@@ -1,36 +1,33 @@
-import { useState } from "react";
-import { AxiosError } from "axios";
-import authClient from "../services/authClient";
-import { API_URL } from "../constants/api";
-
-type SendRequestParams = {
-  id: string;
-  onSuccess: (message: string) => void;
-  onError: (message: string) => void;
-};
+import { useState } from 'react';
+import authClient from '../services/authClient';
+import { API_URL } from '../constants/api';
+import { AxiosError } from 'axios';
 
 const useCancelAppointment = () => {
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const sendRequest = async ({ id, onSuccess, onError }: SendRequestParams) => {
+  const sendRequest = async (
+    appointmentId: string,
+    onSuccess: () => void,
+    onError: (message: string) => void
+  ) => {
     setLoading(true);
-    setErrorMessage("");
+    setErrorMessage('');
 
     try {
-      const res = await authClient.put(`${API_URL}/appointments/cancel/${id}`);
+      const res = await authClient.put(
+        `${API_URL}/appointments/cancel/${appointmentId}`
+      );
 
-      if (res.status === 200) {
-        onSuccess("Appointment cancelled.");
-      } else {
-        const message = res.data?.message || "Unexpected response status.";
-        setErrorMessage(message);
-        onError(message);
+      if (res && res.status === 200) {
+        onSuccess();
       }
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       const message =
-        error.response?.data?.message || "An error occurred. Please try again.";
+        error.response?.data?.message ||
+        'An error occurred while cancelling the appointment.';
       setErrorMessage(message);
       onError(message);
     } finally {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, LoadingSpinner, Badge } from '../components/common';
+import { Card, Badge, CircularLoading } from '../components/common';
 import Button from '../components/common/Button';
 import { useAuth } from '../hooks';
 import useGetAllFacility from '../hooks/useGetAllFacilities';
@@ -36,7 +36,7 @@ const FacilitiesPage: React.FC = () => {
   if (loading) {
     return (
       <div className='min-h-screen bg-gray-50 py-8 flex justify-center items-center'>
-        <LoadingSpinner size='lg' text='Loading facilities...' />
+        <CircularLoading size='lg' label='Loading facilities...' />
       </div>
     );
   }

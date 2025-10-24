@@ -96,3 +96,12 @@ export interface Invitation {
     email: string;
   };
 }
+
+export interface Patient {
+  _id: string;
+  fullName: string;
+  email: string;
+  phone?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

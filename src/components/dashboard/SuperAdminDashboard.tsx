@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Card } from '../common';
 import { menuLinks } from './constant';
 import { Building2, Users, ArrowRight } from 'lucide-react';
@@ -7,7 +7,6 @@ import { useUserFacilities } from '../../hooks/useUserFacilities';
 import { useGetAllFacilities } from '../../hooks';
 
 const SuperAdminDashboard = () => {
-  const navigate = useNavigate();
   const { getAllUsers, allUsers, loading, error } = useUserFacilities();
   const { sendRequest: getAllFacilities, facilities } = useGetAllFacilities();
 
@@ -31,7 +30,7 @@ const SuperAdminDashboard = () => {
     );
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 px-6 py-10'>
+    <div className='min-h-full bg-gradient-to-br from-gray-50 via-white to-blue-50 px-6 py-10'>
       <div className='max-w-7xl mx-auto'>
         <header className='mb-10'>
           <h1 className='text-4xl font-bold text-gray-900 mb-2'>
@@ -65,28 +64,6 @@ const SuperAdminDashboard = () => {
           </Card>
         </div>
 
-        {/* Role Actions */}
-        <div className='grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10'>
-          <button
-            onClick={() => navigate('/admin/manage-users')}
-            className='rounded-xl bg-blue-600 text-white py-3 font-medium hover:bg-blue-700 transition-all shadow-md'
-          >
-            Manage Users
-          </button>
-          <button
-            onClick={() => navigate('/admin/manage-facilities')}
-            className='rounded-xl bg-indigo-600 text-white py-3 font-medium hover:bg-indigo-700 transition-all shadow-md'
-          >
-            Manage Facilities
-          </button>
-          <button
-            onClick={() => navigate('/admin/facility-onboarding')}
-            className='rounded-xl bg-purple-600 text-white py-3 font-medium hover:bg-purple-700 transition-all shadow-md'
-          >
-            Onboard New Facility
-          </button>
-        </div>
-
         {/* Menu Links */}
         <section>
           <h2 className='text-xl font-semibold text-gray-800 mb-4'>
@@ -102,7 +79,11 @@ const SuperAdminDashboard = () => {
                 <Link to={menuLink.link} className='block p-6'>
                   <div className='flex items-center space-x-4'>
                     <div className='w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-200'>
-                      <Users className='text-white w-6 h-6' />
+                      {menuLink.label === 'Manage users' ? (
+                        <Users className='text-white w-6 h-6' />
+                      ) : (
+                        <Building2 className='text-white w-6 h-6' />
+                      )}
                     </div>
                     <div className='flex-1'>
                       <h3 className='text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200'>

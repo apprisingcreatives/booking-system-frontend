@@ -40,7 +40,7 @@ const ManageUsersPage = () => {
   }, [user]);
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 px-4 py-8'>
+    <div className='min-h-full bg-gradient-to-br from-indigo-50 via-white to-purple-50 px-4 py-8'>
       <div className='max-w-7xl mx-auto'>
         <div className='mb-8'>
           <div className='flex justify-between items-center'>
@@ -49,7 +49,7 @@ const ManageUsersPage = () => {
                 Manage Users
               </h1>
               <p className='text-lg text-gray-600'>
-                Manage user accounts and permissions for your dental practice
+                Manage user accounts and permissions
               </p>
             </div>
             {canInviteUsers && (

@@ -15,10 +15,16 @@ import listPlugin from '@fullcalendar/list';
 import { useAuth } from '../hooks';
 import useGetAppointments from '../hooks/useGetAppointments';
 import { CircularLoading, ErrorTypography } from '../components/common';
-import { Appointment, AppointmentStatus, UserRole } from '../models';
+import {
+  Appointment,
+  AppointmentStatus,
+  Chiropractor,
+  UserRole,
+} from '../models';
 import AppointmentDetailsModal from '../components/dashboard/AppointmentDetailsModal';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/common/Button';
+import { LEGEND_ITEMS } from '../components/booking/constants';
 
 const AppointmentsPage = () => {
   const { user } = useAuth();
@@ -104,18 +110,18 @@ const AppointmentsPage = () => {
       let title = '';
       if (role === UserRole.ClientAdmin || role === UserRole.ClientUser) {
         // For facility users, show patient name
-        title = `${(appointment.patient as any)?.fullName || 'Patient'} - ${
-          (appointment.service as any)?.name || 'Service'
+        title = `${appointment.patientId?.fullName || 'Patient'} - ${
+          (appointment.serviceId as any)?.name || 'Service'
         }`;
       } else if (role === UserRole.Patient) {
         // For patients, show chiropractor name
         title = `${
-          (appointment.chiropractor as any)?.name || 'Chiropractor'
-        } - ${(appointment.service as any)?.name || 'Service'}`;
+          (appointment.chiropractorId as Chiropractor)?.name || 'Chiropractor'
+        } - ${(appointment.serviceId as any)?.name || 'Service'}`;
       } else if (role === UserRole.Chiropractor) {
         // For chiropractors, show patient name
-        title = `${(appointment.patient as any)?.fullName || 'Patient'} - ${
-          (appointment.service as any)?.name || 'Service'
+        title = `${appointment.patientId?.fullName || 'Patient'} - ${
+          (appointment.serviceId as any)?.name || 'Service'
         }`;
       }
 
@@ -144,12 +150,34 @@ const AppointmentsPage = () => {
     setSelectedAppointment(null);
   };
 
+  const handleUpdateAppointment = () => {
+    // Refetch appointments after an update
+    if (!user) return;
+
+    if (role === UserRole.ClientAdmin || role === UserRole.ClientUser) {
+      fetchAppointments({ facilityId: facilityId as string });
+    } else if (role === UserRole.Patient) {
+      fetchAppointments({ patientId: userId });
+    } else if (role === UserRole.Chiropractor) {
+      fetchAppointments({ chiropractorId: userId });
+    }
+  };
+
   const handleBookAppointment = () => {
     navigate('/booking');
   };
 
   const handleManagePatients = () => {
     navigate(`/facilities/${facilityId}/manage-patients`);
+  };
+
+  const renderLegend = () => {
+    return LEGEND_ITEMS.map((item) => (
+      <div key={item.id} className='flex items-center gap-2'>
+        <div className={`w-4 h-4 rounded ${item.bgColor}`}></div>
+        <span className='text-sm text-gray-700'>{item.label}</span>
+      </div>
+    ));
   };
 
   if (loading) {
@@ -204,32 +232,7 @@ const AppointmentsPage = () => {
         <h3 className='text-sm font-semibold text-gray-700 mb-3'>
           Status Legend
         </h3>
-        <div className='flex flex-wrap gap-4'>
-          <div className='flex items-center gap-2'>
-            <div className='w-4 h-4 rounded bg-yellow-400'></div>
-            <span className='text-sm text-gray-700'>Pending</span>
-          </div>
-          <div className='flex items-center gap-2'>
-            <div className='w-4 h-4 rounded bg-blue-500'></div>
-            <span className='text-sm text-gray-700'>Confirmed</span>
-          </div>
-          <div className='flex items-center gap-2'>
-            <div className='w-4 h-4 rounded bg-purple-500'></div>
-            <span className='text-sm text-gray-700'>In Progress</span>
-          </div>
-          <div className='flex items-center gap-2'>
-            <div className='w-4 h-4 rounded bg-green-500'></div>
-            <span className='text-sm text-gray-700'>Completed</span>
-          </div>
-          <div className='flex items-center gap-2'>
-            <div className='w-4 h-4 rounded bg-red-500'></div>
-            <span className='text-sm text-gray-700'>Cancelled</span>
-          </div>
-          <div className='flex items-center gap-2'>
-            <div className='w-4 h-4 rounded bg-gray-500'></div>
-            <span className='text-sm text-gray-700'>No Show</span>
-          </div>
-        </div>
+        <div className='flex flex-wrap gap-4'>{renderLegend()}</div>
       </div>
 
       {/* Calendar */}
@@ -265,6 +268,34 @@ const AppointmentsPage = () => {
           allDaySlot={false}
           nowIndicator={true}
           eventDisplay='block'
+          displayEventTime={true}
+          displayEventEnd={false}
+          eventContent={(eventInfo) => {
+            return (
+              <div
+                className='fc-event-main-frame'
+                style={{ padding: '2px 4px' }}
+              >
+                <div
+                  className='fc-event-time w-[100px]'
+                  style={{ fontSize: '0.85em', fontWeight: 'bold' }}
+                >
+                  {eventInfo.timeText}
+                </div>
+                <div
+                  className='fc-event-title'
+                  style={{
+                    fontSize: '0.9em',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {eventInfo.event.title}
+                </div>
+              </div>
+            );
+          }}
         />
       </div>
 
@@ -273,6 +304,7 @@ const AppointmentsPage = () => {
         open={modalOpen}
         appointment={selectedAppointment}
         onClose={handleCloseModal}
+        onUpdate={handleUpdateAppointment}
       />
 
       {/* No appointments message */}

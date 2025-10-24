@@ -1,17 +1,15 @@
-export enum PaymentMethod {
-  GCASH = 'gcash',
-  PAYMAYA = 'paymaya',
-  CREDIT_CARD = 'credit_card',
-  DEBIT_CARD = 'debit_card',
-  CASH = 'cash',
+export enum PaymentStatus {
+  Pending = 'pending',
+  Paid = 'paid',
+  Failed = 'failed',
+  Refunded = 'refunded',
 }
 
-export enum PaymentStatus {
-  PENDING = 'pending',
-  COMPLETED = 'completed',
-  FAILED = 'failed',
-  CANCELLED = 'cancelled',
-  REFUNDED = 'refunded',
+export enum PaymentMethod {
+  Cash = 'cash',
+  Card = 'card',
+  Insurance = 'insurance',
+  Online = 'online',
 }
 
 export interface Payment {

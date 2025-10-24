@@ -10,6 +10,7 @@ export { default as useGetCurrentUserAppointments } from './useGetCurrentUserApp
 export { default as useGetAppointments } from './useGetAppointments';
 export { default as useCancelAppointment } from './useCancelAppointment';
 export { default as useRescheduleAppointment } from './useRescheduleAppointment';
+export { default as useCompleteAppointment } from './useCompleteAppointment';
 export { default as usePutUserRole } from './usePutUserRole';
 export { default as useGetAllUsers } from './useGetAllUser';
 export {
@@ -25,6 +26,7 @@ export { default as useAcceptInvitation } from './useAcceptInvitation';
 export { default as useGetFacilityInvitations } from './useGetFacilityInvitations';
 export { default as useCreateFacility } from './useCreateFacility';
 export { default as useGetFacilityAppointments } from './useGetFacilityAppointments';
+export { default as useGetChiropractorAppointments } from './useGetChiropractorAppointments';
 export { default as useGetFacilityServices } from './useGetFacilityServices';
 export { default as useCreateService } from './useCreateService';
 export { default as useUpdateService } from './useUpdateService';

@@ -7,6 +7,7 @@ import { useGetFacilityAppointments } from '../../hooks';
 
 import TimeSlotModal from './TimeSlotModal';
 import { useUserFacilities } from '../../hooks/useUserFacilities';
+import { Input } from '../common';
 
 type Props = {
   chiropractors: any[];
@@ -21,7 +22,9 @@ const InputFields = ({ chiropractors }: Props) => {
     appointmentDate: string;
     time: string;
     serviceId: string;
+    notes?: string;
   }>();
+
   const servicesOptions = useMemo(() => {
     return services.map((service) => ({
       label: service.name,
@@ -54,7 +57,7 @@ const InputFields = ({ chiropractors }: Props) => {
 
   const options = chiropractors.map((chiro) => ({
     label: `Dr. ${chiro.name}`,
-    value: chiro.userId?._id,
+    value: chiro._id,
   }));
 
   const handleSelectTime = (time: string) => {
@@ -81,7 +84,12 @@ const InputFields = ({ chiropractors }: Props) => {
         onChange={handleChiropractorChange}
       />
       <SelectInput label='Service' options={servicesOptions} name='serviceId' />
-
+      <Input
+        type='textarea'
+        label='Notes'
+        name='notes'
+        placeholder='Enter notes'
+      />
       <div className='flex justify-between gap-4'>
         <InputLabel
           id='appointmentDate'

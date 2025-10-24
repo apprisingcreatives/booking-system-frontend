@@ -1,8 +1,8 @@
-import clsx from "clsx";
-import { useMemo } from "react";
+import clsx from 'clsx';
+import { useMemo } from 'react';
 
 type Props = {
-  size: "sm" | "md" | "lg" | "xl";
+  size: 'sm' | 'md' | 'lg' | 'xl';
   otherClasses?: string;
   containerClass?: string;
   colorClassName?: string;
@@ -13,26 +13,26 @@ const CircularLoading = ({
   otherClasses,
   containerClass,
   colorClassName,
-  label = "",
+  label = '',
 }: Props) => {
   const dimensionClass = useMemo(() => {
-    if (size === "sm") {
-      return "h-4 w-4";
+    if (size === 'sm') {
+      return 'h-4 w-4';
     }
-    if (size === "md") {
-      return "h-6 w-6";
+    if (size === 'md') {
+      return 'h-6 w-6';
     }
-    if (size === "lg") {
-      return "h-10 w-10";
+    if (size === 'lg') {
+      return 'h-10 w-10';
     }
-    if (size === "xl") {
-      return "h-16 w-16";
+    if (size === 'xl') {
+      return 'h-16 w-16';
     }
 
-    return "h-4 w-4";
+    return 'h-4 w-4';
   }, [size]);
 
-  const colorClass = colorClassName || "border-gray-500";
+  const colorClass = colorClassName || 'border-gray-500';
 
   return (
     <div
@@ -40,13 +40,13 @@ const CircularLoading = ({
     >
       <div
         className={clsx({
-          "border-t-2 border-solid rounded-full animate-spin": true,
+          'border-t-2 border-solid rounded-full animate-spin': true,
           [colorClass]: true,
           [dimensionClass]: true,
-          [otherClasses || ""]: true,
+          [otherClasses || '']: true,
         })}
       />
-      <p className="text-white">{label}</p>
+      <p className='text-gray-500'>{label}</p>
     </div>
   );
 };
