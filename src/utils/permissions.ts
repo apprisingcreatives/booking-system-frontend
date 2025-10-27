@@ -39,3 +39,7 @@ export const canComplete = (
       userRole === UserRole.Chiropractor)
   );
 };
+
+export const isClientUser = (userRole: UserRole) => {
+  return userRole === UserRole.ClientAdmin || userRole === UserRole.ClientUser;
+};

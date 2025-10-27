@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import clsx from 'clsx';
 import { Modal } from '../common';
 import { combineDateTime } from '../../utils/dateFormatter';
-import { Appointment } from '../../models';
+import { Appointment, AppointmentStatus } from '../../models';
 import Button from '../common/Button';
 
 interface RescheduleModalProps {
@@ -42,6 +42,7 @@ const RescheduleModal = ({
   const today = new Date().toISOString().split('T')[0];
 
   // Filter booked times for the selected date only
+  // Only consider appointments with Pending or Confirmed status as blocking
   const bookedTimesForSelectedDate = useMemo(() => {
     if (!selectedDate || !appointments) return [];
 
@@ -49,11 +50,40 @@ const RescheduleModal = ({
       .filter((appt) => {
         const apptDate = new Date(appt.appointmentDate);
         const apptDateString = apptDate.toISOString().split('T')[0];
-        return apptDateString === selectedDate;
+
+        // Only block time slots for pending or confirmed appointments
+        const isBlockingStatus =
+          appt.status === AppointmentStatus.Pending ||
+          appt.status === AppointmentStatus.Confirmed;
+
+        return apptDateString === selectedDate && isBlockingStatus;
       })
       .map((appt) => {
-        // Extract time in HH:mm format
-        return appt.appointmentTime;
+        // Normalize time to HH:mm format for comparison
+        const timeString = appt.appointmentTime;
+
+        // Handle 12-hour format (e.g., "2:00:00 PM") by converting to 24-hour format
+        if (timeString.includes('AM') || timeString.includes('PM')) {
+          const isPM = timeString.includes('PM');
+          const timeWithoutPeriod = timeString.replace(/\s?(AM|PM)/i, '');
+          const [h, m] = timeWithoutPeriod.split(':');
+          let hours = parseInt(h);
+          const minutes = parseInt(m);
+
+          // Convert to 24-hour format
+          if (isPM && hours !== 12) {
+            hours += 12;
+          } else if (!isPM && hours === 12) {
+            hours = 0;
+          }
+
+          return `${hours.toString().padStart(2, '0')}:${minutes
+            .toString()
+            .padStart(2, '0')}`;
+        }
+
+        // Already in 24-hour format (e.g., "14:00"), just return it
+        return timeString;
       });
   }, [selectedDate, appointments]);
 

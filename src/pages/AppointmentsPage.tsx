@@ -65,12 +65,43 @@ const AppointmentsPage = () => {
 
     return appointments.map((appointment) => {
       const appointmentDate = new Date(appointment.appointmentDate);
-      const [hours, minutes] = appointment.appointmentTime.split(':');
-      appointmentDate.setHours(parseInt(hours), parseInt(minutes));
+
+      // Parse time - handle both 24-hour format (HH:mm) and 12-hour format (H:mm:ss AM/PM)
+      let hours = 0;
+      let minutes = 0;
+
+      if (
+        appointment.appointmentTime.includes('AM') ||
+        appointment.appointmentTime.includes('PM')
+      ) {
+        // 12-hour format: "2:00:00 PM" or "11:00:00 AM"
+        const isPM = appointment.appointmentTime.includes('PM');
+        const timeWithoutPeriod = appointment.appointmentTime.replace(
+          /\s?(AM|PM)/i,
+          ''
+        );
+        const [h, m] = timeWithoutPeriod.split(':');
+        hours = parseInt(h);
+        minutes = parseInt(m);
+
+        // Convert to 24-hour format
+        if (isPM && hours !== 12) {
+          hours += 12;
+        } else if (!isPM && hours === 12) {
+          hours = 0;
+        }
+      } else {
+        // 24-hour format: "14:00"
+        const [h, m] = appointment.appointmentTime.split(':');
+        hours = parseInt(h);
+        minutes = parseInt(m);
+      }
+
+      appointmentDate.setHours(hours, minutes, 0, 0);
 
       // Calculate end time (default 30 minutes, or use service duration)
       const durationMinutes =
-        (appointment.service as any)?.durationMinutes || 30;
+        (appointment.serviceId as any)?.durationMinutes || 30;
       const endDate = new Date(
         appointmentDate.getTime() + durationMinutes * 60000
       );

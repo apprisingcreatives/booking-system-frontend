@@ -6,19 +6,23 @@ import {
   useSnackbar,
   useAuth,
   useGetFacilityChiropractors,
+  useGetFacilityPatients,
 } from '../../hooks';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SnackbarType } from '../../constants/snackbar';
 import InputFields from './InputFields';
 import Button from '../common/Button';
+import { isClientUser } from '../../utils/permissions';
 
 const BOOKING_FEE = 500; // Default booking fee in PHP
 
 const BookingForm = () => {
   const { user } = useAuth();
-  const { facilityId } = user || {};
+  const { facilityId, role } = user || {};
   const { sendRequest, chiropractors } = useGetFacilityChiropractors();
+  const { sendRequest: sendRequestPatients, patients } =
+    useGetFacilityPatients();
 
   const {
     sendRequest: sendRequestBookAppointment,
@@ -44,10 +48,14 @@ const BookingForm = () => {
     time: string;
     serviceId: string;
     notes?: string;
+    patientId?: string;
   }) => {
     // Directly send booking request (no payment modal)
     sendRequestBookAppointment({
-      values,
+      values: {
+        ...values,
+        patientId: values.patientId || user?._id,
+      },
       onSuccess,
       onError,
     });
@@ -57,8 +65,12 @@ const BookingForm = () => {
     if (facilityId) {
       sendRequest(`${facilityId}`);
     }
+
+    if (role && isClientUser(role)) {
+      sendRequestPatients(`${facilityId}`);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [facilityId]);
+  }, [facilityId, role]);
 
   return (
     <Formik
@@ -70,7 +82,10 @@ const BookingForm = () => {
         {errorMessageBookAppointment && (
           <ErrorTypography>{errorMessageBookAppointment}</ErrorTypography>
         )}
-        <InputFields chiropractors={chiropractors || []} />
+        <InputFields
+          chiropractors={chiropractors || []}
+          patients={patients || []}
+        />
 
         {/* Booking Fee Display */}
         <div className='bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-6 shadow-sm'>

@@ -11,6 +11,7 @@ type SendRequestParams = {
     serviceId: string;
     time: string;
     notes?: string;
+    patientId?: string;
   };
   onSuccess: (message: string) => void;
   onError: (message: string) => void;
@@ -34,6 +35,7 @@ const usePostBookAppointment = () => {
       chiropractorId,
       serviceId,
       notes = '',
+      patientId,
     } = values;
 
     const appointmentDateTime = combineDateTime(appointmentDate, time);
@@ -46,7 +48,10 @@ const usePostBookAppointment = () => {
     };
 
     try {
-      const res = await authClient.post(`${API_URL}/appointments/book`, params);
+      const res = await authClient.post(
+        `${API_URL}/appointments/book/${patientId}`,
+        params
+      );
       if (res && res.status === 201) {
         onSuccess(GENERAL_SUCCESS);
       } else {

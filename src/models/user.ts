@@ -104,4 +104,5 @@ export interface Patient {
   phone?: string;
   createdAt: Date;
   updatedAt: Date;
+  userId?: string;
 }
