@@ -25,4 +25,9 @@ export const menuLinks = [
     description:
       'Oversee facility records, onboarding, and operational details.',
   },
+  {
+    label: 'Onboard new facility',
+    link: '/admin/facility-onboarding',
+    description: 'Onboard a new facility for your organization.',
+  },
 ];

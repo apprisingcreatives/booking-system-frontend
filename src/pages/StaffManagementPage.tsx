@@ -3,12 +3,61 @@ import { Users, ArrowLeft, UserPlus, Settings, Shield } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Button from '../components/common/Button';
 import { useAuth, useRoleAccess } from '../hooks';
+import { userTypes } from '../components/dashboard/clientAdminDashboard/constants';
 
 const StaffManagementPage: React.FC = () => {
   const navigate = useNavigate();
   const { facilityId } = useParams<{ facilityId: string }>();
   const { user } = useAuth();
   const { canManageStaff } = useRoleAccess();
+
+  const features = [
+    {
+      label: ' Staff Invitations',
+      icon: UserPlus,
+      description:
+        'Send invitations to new staff members with role-based access controls.',
+    },
+    {
+      label: ' Role Management',
+      icon: Settings,
+      description:
+        'Assign and modify staff roles with granular permission controls.',
+    },
+    {
+      label: ' Access Control',
+      icon: Shield,
+      description:
+        'Manage staff access to different areas and features of the platform.',
+    },
+  ];
+
+  const renderFeature = (feature: (typeof features)[0]) => {
+    return (
+      <div className='text-center p-6 bg-blue-50 rounded-lg'>
+        <div className='w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4'>
+          <feature.icon className='h-6 w-6 text-white' />
+        </div>
+        <h3 className='text-lg font-semibold text-gray-900 mb-2'>
+          {feature.label}
+        </h3>
+        <p className='text-sm text-gray-600'>{feature.description}</p>
+      </div>
+    );
+  };
+  const renderUserType = (user: (typeof userTypes)[0]) => {
+    return (
+      <div
+        className='flex justify-between items-center p-3 bg-gray-50 rounded-lg'
+        key={user.id}
+      >
+        <span className='text-sm font-medium text-gray-900'>{user.label}</span>
+        <span className='px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full'>
+          {user.access}
+        </span>
+      </div>
+    );
+  };
 
   if (!canManageStaff) {
     return (
@@ -67,46 +116,10 @@ const StaffManagementPage: React.FC = () => {
         {/* Coming Soon Features */}
         <div className='bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-8'>
           <h2 className='text-2xl font-bold text-gray-900 text-center mb-8'>
-            What's Coming
+            Features
           </h2>
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-            <div className='text-center p-6 bg-blue-50 rounded-lg'>
-              <div className='w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4'>
-                <UserPlus className='h-6 w-6 text-white' />
-              </div>
-              <h3 className='text-lg font-semibold text-gray-900 mb-2'>
-                Staff Invitations
-              </h3>
-              <p className='text-sm text-gray-600'>
-                Send invitations to new staff members with role-based access
-                controls.
-              </p>
-            </div>
-
-            <div className='text-center p-6 bg-green-50 rounded-lg'>
-              <div className='w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4'>
-                <Settings className='h-6 w-6 text-white' />
-              </div>
-              <h3 className='text-lg font-semibold text-gray-900 mb-2'>
-                Role Management
-              </h3>
-              <p className='text-sm text-gray-600'>
-                Assign and modify staff roles with granular permission controls.
-              </p>
-            </div>
-
-            <div className='text-center p-6 bg-purple-50 rounded-lg'>
-              <div className='w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4'>
-                <Shield className='h-6 w-6 text-white' />
-              </div>
-              <h3 className='text-lg font-semibold text-gray-900 mb-2'>
-                Access Control
-              </h3>
-              <p className='text-sm text-gray-600'>
-                Manage staff access to different areas and features of the
-                platform.
-              </p>
-            </div>
+            {features.map((feature) => renderFeature(feature))}
           </div>
         </div>
 
@@ -118,22 +131,7 @@ const StaffManagementPage: React.FC = () => {
               Staff Roles
             </h3>
             <div className='space-y-3'>
-              <div className='flex justify-between items-center p-3 bg-gray-50 rounded-lg'>
-                <span className='text-sm font-medium text-gray-900'>
-                  Client Admin
-                </span>
-                <span className='px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full'>
-                  Full Access
-                </span>
-              </div>
-              <div className='flex justify-between items-center p-3 bg-gray-50 rounded-lg'>
-                <span className='text-sm font-medium text-gray-900'>
-                  Client User
-                </span>
-                <span className='px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full'>
-                  Limited Access
-                </span>
-              </div>
+              {userTypes.map((user) => renderUserType(user))}
             </div>
           </div>
 

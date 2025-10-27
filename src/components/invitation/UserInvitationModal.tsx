@@ -26,13 +26,15 @@ const UserInvitationModal: React.FC<UserInvitationModalProps> = ({
   const { snackbar } = useSnackbar();
   const { sendInvitation, loading } = useSendInvitation();
 
-  const [formData, setFormData] = useState({
-    email: '',
-    role: UserRole.ClientUser,
-  });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const { role } = user || {};
+
+  const [formData, setFormData] = useState({
+    email: '',
+    role: role || UserRole.ClientUser,
+  });
+
   const roleOptions = useMemo(() => {
     if (!role) return [];
     return getRoleOptions(role);
@@ -85,7 +87,16 @@ const UserInvitationModal: React.FC<UserInvitationModalProps> = ({
   };
 
   const renderRolePermissions = () => {
-    if (formData.role === UserRole.ClientAdmin) {
+    if (formData.role === UserRole.SuperAdmin) {
+      return (
+        <ul className='list-disc list-inside space-y-1'>
+          <li>Onboard new facilities</li>
+          <li>View and manage facility</li>
+          <li>View and manage users</li>
+          <li>Send super admin invitations to other admins</li>
+        </ul>
+      );
+    } else if (formData.role === UserRole.ClientAdmin) {
       return (
         <ul className='list-disc list-inside space-y-1'>
           <li>Manage facility users and settings</li>

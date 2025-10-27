@@ -1,7 +1,8 @@
 import React from 'react';
 import { clsx } from 'clsx';
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
   label?: string;
   error?: string;
   helperText?: string;
@@ -18,6 +19,16 @@ const Input: React.FC<InputProps> = ({
   className,
   ...props
 }) => {
+  const isTextarea = props.type === 'textarea';
+
+  const baseClasses = clsx(
+    'block w-full rounded-md border-gray-300 shadow-sm border focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 focus:outline-blue-500 disabled:bg-gray-200 disabled:text-gray-600 disabled:border-0 placeholder:text-gray-500 placeholder:italic',
+    {
+      'border-red-300 focus:border-red-500 focus:ring-red-500': error,
+    },
+    className
+  );
+
   return (
     <div className={clsx('space-y-1', { 'w-full': fullWidth })}>
       {label && (
@@ -29,16 +40,17 @@ const Input: React.FC<InputProps> = ({
           {required && <span className='text-red-500 ml-1'>*</span>}
         </label>
       )}
-      <input
-        {...props}
-        className={clsx(
-          'block w-full rounded-md border-gray-300 shadow-sm border focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 focus:outline-blue-500 disabled:bg-gray-200 disabled:text-gray-600 disabled:border-0 placeholder:text-gray-500 placeholder:italic',
-          {
-            'border-red-300 focus:border-red-500 focus:ring-red-500': error,
-          },
-          className
-        )}
-      />
+
+      {isTextarea ? (
+        <textarea
+          {...(props as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
+          rows={4}
+          className={baseClasses}
+        />
+      ) : (
+        <input {...props} className={baseClasses} />
+      )}
+
       {error && <p className='text-sm text-red-600'>{error}</p>}
       {helperText && !error && (
         <p className='text-sm text-gray-500'>{helperText}</p>

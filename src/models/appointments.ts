@@ -1,4 +1,5 @@
-import { User, Chiropractor, Service, Facility } from './user';
+import { PaymentMethod, PaymentStatus } from './payment';
+import { User, Chiropractor, Service, Facility, Patient } from './user';
 
 export enum AppointmentStatus {
   Pending = 'pending',
@@ -9,26 +10,11 @@ export enum AppointmentStatus {
   NoShow = 'no_show',
 }
 
-export enum PaymentStatus {
-  Pending = 'pending',
-  Paid = 'paid',
-  Failed = 'failed',
-  Refunded = 'refunded',
-}
-
-export enum PaymentMethod {
-  Cash = 'cash',
-  Card = 'card',
-  Insurance = 'insurance',
-  Online = 'online',
-}
-
 export interface Appointment {
   _id: string;
-  patientId: string;
   chiropractorId: string | Partial<Chiropractor>;
-  serviceId: string;
-  facilityId: string;
+  serviceId: string | Partial<Service>;
+  facilityId: string | Partial<Facility>;
   appointmentDate: Date | string;
   appointmentTime: string;
   status: AppointmentStatus;
@@ -39,7 +25,7 @@ export interface Appointment {
   createdAt: Date;
   updatedAt: Date;
   // Populated fields
-  patient?: User;
+  patientId?: User | Patient;
   chiropractor?: Chiropractor;
   service?: Service;
   facility?: Facility;

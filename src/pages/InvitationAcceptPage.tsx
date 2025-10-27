@@ -16,6 +16,7 @@ const InvitationAcceptPage: React.FC = () => {
   const {
     getInvitation,
     invitation,
+    patientDetails,
     loading: invitationLoading,
     errorMessage: invitationError,
   } = useGetInvitation();
@@ -37,7 +38,19 @@ const InvitationAcceptPage: React.FC = () => {
     if (token) {
       getInvitation(token);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
+
+  // Prepopulate form data for patients
+  useEffect(() => {
+    if (patientDetails) {
+      setFormData((prev) => ({
+        ...prev,
+        fullName: patientDetails.fullName || '',
+        phone: patientDetails.phone || '',
+      }));
+    }
+  }, [patientDetails]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -116,6 +129,8 @@ const InvitationAcceptPage: React.FC = () => {
         return 'Super Administrator';
       case 'chiropractor':
         return 'Chiropractor';
+      case 'patient':
+        return 'Patient';
       default:
         return role;
     }
@@ -235,6 +250,7 @@ const InvitationAcceptPage: React.FC = () => {
               error={errors.fullName}
               required
               placeholder='Enter your full name'
+              disabled={!!patientDetails}
             />
 
             <Input
@@ -244,7 +260,12 @@ const InvitationAcceptPage: React.FC = () => {
                 setFormData({ ...formData, phone: e.target.value })
               }
               placeholder='(555) 123-4567'
-              helperText='Optional - for contact purposes'
+              helperText={
+                patientDetails
+                  ? 'Phone number from your patient record'
+                  : 'Optional - for contact purposes'
+              }
+              disabled={!!patientDetails}
             />
 
             {/* Chiropractor fields */}

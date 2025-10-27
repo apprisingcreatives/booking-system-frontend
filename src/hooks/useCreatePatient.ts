@@ -8,7 +8,8 @@ interface CreatePatientParams {
   fullName: string;
   email: string;
   phone?: string;
-  password: string;
+  dob: string;
+  gender: string;
   onSuccess?: (message: string) => void;
   onError?: (message: string) => void;
 }
@@ -23,7 +24,8 @@ const useCreatePatient = () => {
       fullName,
       email,
       phone,
-      password,
+      dob,
+      gender,
       onSuccess,
       onError,
     }: CreatePatientParams) => {
@@ -32,12 +34,13 @@ const useCreatePatient = () => {
 
       try {
         const res = await authClient.post(
-          `${API_URL}/facilities/${facilityId}/patients`,
+          `${API_URL}/facilities/${facilityId}/patients/new`,
           {
             fullName,
             email,
             phone,
-            password,
+            dob,
+            gender: gender || 'male',
           }
         );
 

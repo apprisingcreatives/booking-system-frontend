@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+
 export type FormatDateProps = {
   date: string | number | Date;
   noDateDisplay?: string | undefined;
@@ -38,4 +40,22 @@ export const splitDateTime = (dateTime: Date | string) => {
   const time = parsed.toTimeString().slice(0, 5);
 
   return { date, time };
+};
+
+export const formatDate = (date: Date | string) => {
+  try {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return format(dateObj, 'MMMM d, yyyy');
+  } catch {
+    return 'N/A';
+  }
+};
+
+export const formatDateTimeFns = (date: Date | string) => {
+  try {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return format(dateObj, 'MMM d, yyyy h:mm a');
+  } catch {
+    return 'N/A';
+  }
 };

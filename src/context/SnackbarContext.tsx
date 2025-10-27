@@ -130,7 +130,7 @@ export const Provider: React.FC<SnackbarProviderProps> = ({ children }) => {
             <Button
               onClick={handleClose}
               // paddingClassName="ml-2 pl-1 py-1"
-              className='hover:opacity-50'
+              className='hover:opacity-50 bg-transparent border-none'
             >
               <CloseIcon size='1.5em' />
             </Button>

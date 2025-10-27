@@ -2,7 +2,7 @@ import { useAuth } from '../hooks';
 import { Navigate } from 'react-router-dom';
 import { ReactNode } from 'react';
 import { getAccessToken } from '../services/localStorage';
-import { LoadingSpinner } from '../components/common';
+import { CircularLoading } from '../components/common';
 import { UserRole } from '../models/user';
 
 interface ProtectedRouteProps {
@@ -23,7 +23,7 @@ const ProtectedRoute = ({
   const isAuthenticating = accessToken && !isAuthenticated;
 
   if (isAuthenticating) {
-    return <LoadingSpinner size='lg' text='Authenticating...' />;
+    return <CircularLoading size='lg' label='Authenticating...' />;
   }
 
   if (!isAuthenticated) {

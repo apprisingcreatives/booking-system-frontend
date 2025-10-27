@@ -16,7 +16,7 @@ import { FacilityUserManagement } from '../components';
 
 const Home = lazy(() => import('../components/home/Home'));
 const BookingsPage = lazy(() => import('../pages/BookingsPage'));
-const Dashboard = lazy(() => import('../pages/DashboardPage'));
+const DashboardPage = lazy(() => import('../pages/DashboardPage'));
 const UserProfilePage = lazy(() => import('../pages/UserProfilePage'));
 const AuthPage = lazy(() => import('../pages/AuthPages'));
 const PatientManagementPage = lazy(
@@ -98,7 +98,7 @@ const AppRoutes = () => {
             path='/dashboard'
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <DashboardPage />
               </ProtectedRoute>
             }
           />
@@ -113,9 +113,7 @@ const AppRoutes = () => {
           <Route
             path='/admin/manage-users'
             element={
-              <ProtectedRoute
-                requiredRoles={[UserRole.SuperAdmin, UserRole.ClientAdmin]}
-              >
+              <ProtectedRoute requiredRoles={[UserRole.SuperAdmin]}>
                 <ManageUsersPage />
               </ProtectedRoute>
             }
