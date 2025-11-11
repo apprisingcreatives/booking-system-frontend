@@ -2,7 +2,9 @@ import React from 'react';
 import { clsx } from 'clsx';
 
 interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
+  extends React.InputHTMLAttributes<
+    HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+  > {
   label?: string;
   error?: string;
   helperText?: string;

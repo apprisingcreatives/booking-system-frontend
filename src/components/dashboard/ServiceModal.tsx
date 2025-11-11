@@ -98,7 +98,7 @@ const ServiceModal: React.FC<ServiceModalProps> = ({
       description: formData.description.trim(),
       durationMinutes: Number(formData.durationMinutes),
       price: Number(formData.price),
-      onSuccess: (savedService: Service, message: string) => {
+      onSuccess: (_savedService: Service, message: string) => {
         snackbar(message, SeverityType.SUCCESS, true);
         handleClose();
         onSuccess();

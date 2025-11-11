@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { clsx } from 'clsx';
 
@@ -101,11 +102,11 @@ function Table<T extends Record<string, any>>({
                   >
                     {column.render
                       ? column.render(
-                          getValue(item, column.key),
+                          getValue(item, column.key) as React.ReactNode,
                           item,
                           rowIndex
                         )
-                      : getValue(item, column.key)}
+                      : (getValue(item, column.key) as React.ReactNode)}
                   </td>
                 ))}
               </tr>

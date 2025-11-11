@@ -1,4 +1,4 @@
-import { Facility } from '../../models';
+import { Facility } from '../../../models';
 
 type Props = {
   facility: Facility;

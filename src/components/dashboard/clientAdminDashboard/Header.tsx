@@ -1,5 +1,4 @@
 import { Building2 } from 'lucide-react';
-import React from 'react';
 import { Facility } from '../../../models';
 
 type Props = {

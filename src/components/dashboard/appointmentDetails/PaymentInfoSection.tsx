@@ -1,4 +1,3 @@
-import React from 'react';
 import { PaymentMethod } from '../../../models';
 
 type Props = {

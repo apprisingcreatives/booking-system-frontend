@@ -11,6 +11,7 @@ export enum AppointmentStatus {
 }
 
 export interface Appointment {
+  id?: string;
   _id: string;
   chiropractorId: string | Partial<Chiropractor>;
   serviceId: string | Partial<Service>;
