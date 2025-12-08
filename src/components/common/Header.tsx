@@ -117,7 +117,7 @@ const Header = ({
                 onClick={handleLoginClick}
                 className='ml-2 px-5 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-sm hover:shadow-md'
               >
-                Login / Sign Up
+                Login
               </Button>
             )}
           </nav>
@@ -220,7 +220,7 @@ const Header = ({
                 }}
                 className='w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium shadow-sm text-center'
               >
-                Login / Sign Up
+                Login
               </button>
             )}
           </nav>
